@@ -58,39 +58,39 @@ namespace Capstone.Migrations
                 name: "Carrelli",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    IdCarrello = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    UserId = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Carrelli", x => x.Id);
+                    table.PrimaryKey("PK_Carrelli", x => x.IdCarrello);
                 });
 
             migrationBuilder.CreateTable(
                 name: "FasceDiPrezzo",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    IdFasciaDiPrezzo = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Nome = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_FasceDiPrezzo", x => x.Id);
+                    table.PrimaryKey("PK_FasceDiPrezzo", x => x.IdFasciaDiPrezzo);
                 });
 
             migrationBuilder.CreateTable(
                 name: "Paesi",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    IdPaese = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Nome = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Paesi", x => x.Id);
+                    table.PrimaryKey("PK_Paesi", x => x.IdPaese);
                 });
 
             migrationBuilder.CreateTable(
@@ -203,55 +203,21 @@ namespace Capstone.Migrations
                 name: "Itinerari",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    IdItinerario = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Nome = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
+                    NomeItinerario = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
                     Durata = table.Column<int>(type: "int", nullable: false),
+                    ImmagineUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     PaeseId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Itinerari", x => x.Id);
+                    table.PrimaryKey("PK_Itinerari", x => x.IdItinerario);
                     table.ForeignKey(
                         name: "FK_Itinerari_Paesi_PaeseId",
                         column: x => x.PaeseId,
                         principalTable: "Paesi",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "CarrelloItems",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    ItinerarioId = table.Column<int>(type: "int", nullable: false),
-                    FasciaDiPrezzoId = table.Column<int>(type: "int", nullable: false),
-                    Prezzo = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
-                    Quantita = table.Column<int>(type: "int", nullable: false),
-                    CarrelloId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_CarrelloItems", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_CarrelloItems_Carrelli_CarrelloId",
-                        column: x => x.CarrelloId,
-                        principalTable: "Carrelli",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_CarrelloItems_FasceDiPrezzo_FasciaDiPrezzoId",
-                        column: x => x.FasciaDiPrezzoId,
-                        principalTable: "FasceDiPrezzo",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_CarrelloItems_Itinerari_ItinerarioId",
-                        column: x => x.ItinerarioId,
-                        principalTable: "Itinerari",
-                        principalColumn: "Id",
+                        principalColumn: "IdPaese",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -259,26 +225,26 @@ namespace Capstone.Migrations
                 name: "ItinerarioFascePrezzo",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    IdItinerarioFasciaPrezzo = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    ItinerarioId = table.Column<int>(type: "int", nullable: false),
-                    FasciaDiPrezzoId = table.Column<int>(type: "int", nullable: false),
+                    IdItinerario = table.Column<int>(type: "int", nullable: false),
+                    IdFasciaDiPrezzo = table.Column<int>(type: "int", nullable: false),
                     Prezzo = table.Column<decimal>(type: "decimal(10,2)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ItinerarioFascePrezzo", x => x.Id);
+                    table.PrimaryKey("PK_ItinerarioFascePrezzo", x => x.IdItinerarioFasciaPrezzo);
                     table.ForeignKey(
-                        name: "FK_ItinerarioFascePrezzo_FasceDiPrezzo_FasciaDiPrezzoId",
-                        column: x => x.FasciaDiPrezzoId,
+                        name: "FK_ItinerarioFascePrezzo_FasceDiPrezzo_IdFasciaDiPrezzo",
+                        column: x => x.IdFasciaDiPrezzo,
                         principalTable: "FasceDiPrezzo",
-                        principalColumn: "Id",
+                        principalColumn: "IdFasciaDiPrezzo",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_ItinerarioFascePrezzo_Itinerari_ItinerarioId",
-                        column: x => x.ItinerarioId,
+                        name: "FK_ItinerarioFascePrezzo_Itinerari_IdItinerario",
+                        column: x => x.IdItinerario,
                         principalTable: "Itinerari",
-                        principalColumn: "Id",
+                        principalColumn: "IdItinerario",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -286,22 +252,83 @@ namespace Capstone.Migrations
                 name: "ItinerarioGiorni",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    IdItinerarioGiorno = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Giorno = table.Column<int>(type: "int", nullable: false),
                     Titolo = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
-                    Descrizione = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ItinerarioId = table.Column<int>(type: "int", nullable: false)
+                    Descrizione = table.Column<string>(type: "nvarchar(2000)", maxLength: 2000, nullable: false),
+                    IdItinerario = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ItinerarioGiorni", x => x.Id);
+                    table.PrimaryKey("PK_ItinerarioGiorni", x => x.IdItinerarioGiorno);
                     table.ForeignKey(
-                        name: "FK_ItinerarioGiorni_Itinerari_ItinerarioId",
-                        column: x => x.ItinerarioId,
+                        name: "FK_ItinerarioGiorni_Itinerari_IdItinerario",
+                        column: x => x.IdItinerario,
                         principalTable: "Itinerari",
-                        principalColumn: "Id",
+                        principalColumn: "IdItinerario",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Partenze",
+                columns: table => new
+                {
+                    IdPartenza = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    IdItinerario = table.Column<int>(type: "int", nullable: false),
+                    DataPartenza = table.Column<DateOnly>(type: "date", nullable: false),
+                    PostiDisponibili = table.Column<int>(type: "int", nullable: false),
+                    Stato = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Partenze", x => x.IdPartenza);
+                    table.ForeignKey(
+                        name: "FK_Partenze_Itinerari_IdItinerario",
+                        column: x => x.IdItinerario,
+                        principalTable: "Itinerari",
+                        principalColumn: "IdItinerario",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CarrelloItems",
+                columns: table => new
+                {
+                    IdCarrelloItem = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    IdItinerario = table.Column<int>(type: "int", nullable: false),
+                    IdItinerarioFasciaPrezzo = table.Column<int>(type: "int", nullable: false),
+                    IdPartenza = table.Column<int>(type: "int", nullable: false),
+                    Prezzo = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
+                    Quantita = table.Column<int>(type: "int", nullable: false),
+                    IdCarrello = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CarrelloItems", x => x.IdCarrelloItem);
+                    table.ForeignKey(
+                        name: "FK_CarrelloItems_Carrelli_IdCarrello",
+                        column: x => x.IdCarrello,
+                        principalTable: "Carrelli",
+                        principalColumn: "IdCarrello",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_CarrelloItems_Itinerari_IdItinerario",
+                        column: x => x.IdItinerario,
+                        principalTable: "Itinerari",
+                        principalColumn: "IdItinerario");
+                    table.ForeignKey(
+                        name: "FK_CarrelloItems_ItinerarioFascePrezzo_IdItinerarioFasciaPrezzo",
+                        column: x => x.IdItinerarioFasciaPrezzo,
+                        principalTable: "ItinerarioFascePrezzo",
+                        principalColumn: "IdItinerarioFasciaPrezzo");
+                    table.ForeignKey(
+                        name: "FK_CarrelloItems_Partenze_IdPartenza",
+                        column: x => x.IdPartenza,
+                        principalTable: "Partenze",
+                        principalColumn: "IdPartenza");
                 });
 
             migrationBuilder.InsertData(
@@ -309,13 +336,13 @@ namespace Capstone.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "424b0d3d-d302-49d2-b8c7-f40579e73c82", "424b0d3d-d302-49d2-b8c7-f40579e73c82", "User", "USER" },
-                    { "aee0ff4f-202b-4b80-ac32-63644a072953", "aee0ff4f-202b-4b80-ac32-63644a072953", "Admin", "ADMIN" }
+                    { "2b57dd07-6b6b-4815-864e-371fd78d04f7", "2b57dd07-6b6b-4815-864e-371fd78d04f7", "Admin", "ADMIN" },
+                    { "5a659c0a-2b3a-45d3-a1ff-3edc95ec40de", "5a659c0a-2b3a-45d3-a1ff-3edc95ec40de", "User", "USER" }
                 });
 
             migrationBuilder.InsertData(
                 table: "FasceDiPrezzo",
-                columns: new[] { "Id", "Nome" },
+                columns: new[] { "IdFasciaDiPrezzo", "Nome" },
                 values: new object[,]
                 {
                     { 1, "Economica" },
@@ -325,7 +352,7 @@ namespace Capstone.Migrations
 
             migrationBuilder.InsertData(
                 table: "Paesi",
-                columns: new[] { "Id", "Nome" },
+                columns: new[] { "IdPaese", "Nome" },
                 values: new object[,]
                 {
                     { 1, "Thailandia" },
@@ -335,17 +362,17 @@ namespace Capstone.Migrations
 
             migrationBuilder.InsertData(
                 table: "Itinerari",
-                columns: new[] { "Id", "Durata", "Nome", "PaeseId" },
+                columns: new[] { "IdItinerario", "Durata", "ImmagineUrl", "NomeItinerario", "PaeseId" },
                 values: new object[,]
                 {
-                    { 1, 9, "Tour in Thailandia", 1 },
-                    { 2, 12, "Tour in Cina", 2 },
-                    { 3, 15, "Tour in Giappone", 3 }
+                    { 1, 9, "https://example.com/images/thailandia.jpg", "Tour in Thailandia", 1 },
+                    { 2, 12, "https://example.com/images/cina.jpg", "Tour in Cina", 2 },
+                    { 3, 15, "https://example.com/images/giappone.jpg", "Tour in Giappone", 3 }
                 });
 
             migrationBuilder.InsertData(
                 table: "ItinerarioFascePrezzo",
-                columns: new[] { "Id", "FasciaDiPrezzoId", "ItinerarioId", "Prezzo" },
+                columns: new[] { "IdItinerarioFasciaPrezzo", "IdFasciaDiPrezzo", "IdItinerario", "Prezzo" },
                 values: new object[,]
                 {
                     { 1, 1, 1, 999.99m },
@@ -361,7 +388,7 @@ namespace Capstone.Migrations
 
             migrationBuilder.InsertData(
                 table: "ItinerarioGiorni",
-                columns: new[] { "Id", "Descrizione", "Giorno", "ItinerarioId", "Titolo" },
+                columns: new[] { "IdItinerarioGiorno", "Descrizione", "Giorno", "IdItinerario", "Titolo" },
                 values: new object[,]
                 {
                     { 1, "Arrivo all'aeroporto internazionale di Bangkok e trasferimento in hotel.", 1, 1, "Arrivo in Thailandia" },
@@ -400,6 +427,16 @@ namespace Capstone.Migrations
                     { 34, "Giornata di shopping a Shibuya e Shinjuku.", 13, 3, "Shopping a Tokyo" },
                     { 35, "Escursione al Monte Fuji e visita ai suoi laghi.", 14, 3, "Escursione al Monte Fuji" },
                     { 36, "Trasferimento all'aeroporto di Tokyo per il volo di ritorno.", 15, 3, "Partenza" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "Partenze",
+                columns: new[] { "IdPartenza", "DataPartenza", "IdItinerario", "PostiDisponibili", "Stato" },
+                values: new object[,]
+                {
+                    { 1, new DateOnly(2025, 6, 10), 1, 15, "Disponibile" },
+                    { 2, new DateOnly(2025, 7, 20), 1, 10, "Disponibile" },
+                    { 3, new DateOnly(2025, 8, 5), 2, 5, "Sold Out" }
                 });
 
             migrationBuilder.CreateIndex(
@@ -442,19 +479,24 @@ namespace Capstone.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CarrelloItems_CarrelloId",
+                name: "IX_CarrelloItems_IdCarrello",
                 table: "CarrelloItems",
-                column: "CarrelloId");
+                column: "IdCarrello");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CarrelloItems_FasciaDiPrezzoId",
+                name: "IX_CarrelloItems_IdItinerario",
                 table: "CarrelloItems",
-                column: "FasciaDiPrezzoId");
+                column: "IdItinerario");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CarrelloItems_ItinerarioId",
+                name: "IX_CarrelloItems_IdItinerarioFasciaPrezzo",
                 table: "CarrelloItems",
-                column: "ItinerarioId");
+                column: "IdItinerarioFasciaPrezzo");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CarrelloItems_IdPartenza",
+                table: "CarrelloItems",
+                column: "IdPartenza");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Itinerari_PaeseId",
@@ -462,19 +504,24 @@ namespace Capstone.Migrations
                 column: "PaeseId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ItinerarioFascePrezzo_FasciaDiPrezzoId",
+                name: "IX_ItinerarioFascePrezzo_IdFasciaDiPrezzo",
                 table: "ItinerarioFascePrezzo",
-                column: "FasciaDiPrezzoId");
+                column: "IdFasciaDiPrezzo");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ItinerarioFascePrezzo_ItinerarioId",
+                name: "IX_ItinerarioFascePrezzo_IdItinerario",
                 table: "ItinerarioFascePrezzo",
-                column: "ItinerarioId");
+                column: "IdItinerario");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ItinerarioGiorni_ItinerarioId",
+                name: "IX_ItinerarioGiorni_IdItinerario",
                 table: "ItinerarioGiorni",
-                column: "ItinerarioId");
+                column: "IdItinerario");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Partenze_IdItinerario",
+                table: "Partenze",
+                column: "IdItinerario");
         }
 
         /// <inheritdoc />
@@ -499,9 +546,6 @@ namespace Capstone.Migrations
                 name: "CarrelloItems");
 
             migrationBuilder.DropTable(
-                name: "ItinerarioFascePrezzo");
-
-            migrationBuilder.DropTable(
                 name: "ItinerarioGiorni");
 
             migrationBuilder.DropTable(
@@ -512,6 +556,12 @@ namespace Capstone.Migrations
 
             migrationBuilder.DropTable(
                 name: "Carrelli");
+
+            migrationBuilder.DropTable(
+                name: "ItinerarioFascePrezzo");
+
+            migrationBuilder.DropTable(
+                name: "Partenze");
 
             migrationBuilder.DropTable(
                 name: "FasceDiPrezzo");

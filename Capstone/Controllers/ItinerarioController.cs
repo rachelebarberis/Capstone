@@ -5,34 +5,41 @@ using Capstone.Models;
     using Capstone.Data; 
     using System.Linq;
     using System.Threading.Tasks;
- 
+using Capstone.Services;
 
-    namespace Capstone.Controllers
+
+namespace Capstone.Controllers
     {
         [Route("api/[controller]")]
         [ApiController]
         public class ItinerarioController : ControllerBase
         {
             private readonly ApplicationDbContext _context;
+        
 
             public ItinerarioController(ApplicationDbContext context)
             {
-                _context = context;
-            }
 
-            // GET: api/itinerari
-            [HttpGet]
+                _context = context;
+        
+        }
+
+      
+
+        // GET: api/itinerari
+        [HttpGet]
             public async Task<ActionResult> GetItinerari()
             {
             var itinerari = _context.Itinerari
-      .Include(i => i.Paese)  // Include Paese
+      .Include(i => i.Paese)
+       .Include(i => i.Partenze)// Include Paese
       .Include(i => i.ItinerarioGiorni)  // Include i giorni dell'itinerario
       .Include(i => i.FasceDiPrezzo)  // Include la relazione tra Itinerario e FasciaDiPrezzo
       .ThenInclude(fp => fp.FasciaDiPrezzo) // Include la FasciaDiPrezzo effettiva (attraverso la relazione)
       .Select(i => new
       {
-          i.Id,
-          i.Nome,
+          i.IdItinerario,
+          i.NomeItinerario,
           PaeseNome = i.Paese.Nome,
           Giorni = i.ItinerarioGiorni.Select(g => new
           {
@@ -43,7 +50,11 @@ using Capstone.Models;
           {
               NomeFascia = fp.FasciaDiPrezzo.Nome,  // Nome della Fascia di Prezzo
               fp.Prezzo  // Prezzo associato alla Fascia di Prezzo
-          }).ToList()
+          }).ToList(),
+          Partenza = i.Partenze.Select(p => new
+          {
+              p.DataPartenza
+          }).ToList(),
       })
       .ToList();
 

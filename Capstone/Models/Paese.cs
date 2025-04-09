@@ -1,10 +1,22 @@
-﻿namespace Capstone.Models
-{
-    public class Paese
-    {
-        public int Id { get; set; }
-        public string Nome { get; set; }
+﻿using System.ComponentModel.DataAnnotations;
 
-        public List<Itinerario> Itinerari { get; set; }
+namespace Capstone.Models
+{
+   
+
+
+        public class Paese
+        {
+            [Key]  
+            public int IdPaese { get; set; }
+
+            [Required]  
+            [StringLength(100)]  
+            public required string Nome { get; set; }
+
+ 
+            public List<Itinerario> Itinerari { get; set; }
+        }
     }
-}
+
+

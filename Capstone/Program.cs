@@ -8,6 +8,7 @@ using Microsoft.OpenApi.Models;
 using Capstone.Settings;
 using Serilog;
 using System.Text;
+using Capstone.Services;
 
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Information()
@@ -106,7 +107,8 @@ try
     builder.Services.AddScoped<UserManager<ApplicationUser>>();
     builder.Services.AddScoped<SignInManager<ApplicationUser>>();
     builder.Services.AddScoped<RoleManager<ApplicationRole>>();
-
+    builder.Services.AddScoped<PaeseService>();
+    builder.Services.AddScoped<FasceDiPrezzoService>();
 
 
     builder.Services.AddDbContext<ApplicationDbContext>(options =>

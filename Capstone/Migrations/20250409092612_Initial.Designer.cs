@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Capstone.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250408142142_Initial")]
+    [Migration("20250409092612_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -54,15 +54,15 @@ namespace Capstone.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "aee0ff4f-202b-4b80-ac32-63644a072953",
-                            ConcurrencyStamp = "aee0ff4f-202b-4b80-ac32-63644a072953",
+                            Id = "2b57dd07-6b6b-4815-864e-371fd78d04f7",
+                            ConcurrencyStamp = "2b57dd07-6b6b-4815-864e-371fd78d04f7",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "424b0d3d-d302-49d2-b8c7-f40579e73c82",
-                            ConcurrencyStamp = "424b0d3d-d302-49d2-b8c7-f40579e73c82",
+                            Id = "5a659c0a-2b3a-45d3-a1ff-3edc95ec40de",
+                            ConcurrencyStamp = "5a659c0a-2b3a-45d3-a1ff-3edc95ec40de",
                             Name = "User",
                             NormalizedName = "USER"
                         });
@@ -158,36 +158,40 @@ namespace Capstone.Migrations
 
             modelBuilder.Entity("Capstone.Models.Carrello.Carrello", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("IdCarrello")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdCarrello"));
 
                     b.Property<string>("UserId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
 
-                    b.HasKey("Id");
+                    b.HasKey("IdCarrello");
 
                     b.ToTable("Carrelli");
                 });
 
             modelBuilder.Entity("Capstone.Models.Carrello.CarrelloItem", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("IdCarrelloItem")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdCarrelloItem"));
 
-                    b.Property<int>("CarrelloId")
+                    b.Property<int>("IdCarrello")
                         .HasColumnType("int");
 
-                    b.Property<int>("FasciaDiPrezzoId")
+                    b.Property<int>("IdItinerario")
                         .HasColumnType("int");
 
-                    b.Property<int>("ItinerarioId")
+                    b.Property<int>("IdItinerarioFasciaPrezzo")
+                        .HasColumnType("int");
+
+                    b.Property<int>("IdPartenza")
                         .HasColumnType("int");
 
                     b.Property<decimal>("Prezzo")
@@ -196,64 +200,70 @@ namespace Capstone.Migrations
                     b.Property<int>("Quantita")
                         .HasColumnType("int");
 
-                    b.HasKey("Id");
+                    b.HasKey("IdCarrelloItem");
 
-                    b.HasIndex("CarrelloId");
+                    b.HasIndex("IdCarrello");
 
-                    b.HasIndex("FasciaDiPrezzoId");
+                    b.HasIndex("IdItinerario");
 
-                    b.HasIndex("ItinerarioId");
+                    b.HasIndex("IdItinerarioFasciaPrezzo");
+
+                    b.HasIndex("IdPartenza");
 
                     b.ToTable("CarrelloItems");
                 });
 
             modelBuilder.Entity("Capstone.Models.FasciaDiPrezzo", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("IdFasciaDiPrezzo")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdFasciaDiPrezzo"));
 
                     b.Property<string>("Nome")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.HasKey("Id");
+                    b.HasKey("IdFasciaDiPrezzo");
 
                     b.ToTable("FasceDiPrezzo");
 
                     b.HasData(
                         new
                         {
-                            Id = 1,
+                            IdFasciaDiPrezzo = 1,
                             Nome = "Economica"
                         },
                         new
                         {
-                            Id = 2,
+                            IdFasciaDiPrezzo = 2,
                             Nome = "Standard"
                         },
                         new
                         {
-                            Id = 3,
+                            IdFasciaDiPrezzo = 3,
                             Nome = "Lusso"
                         });
                 });
 
             modelBuilder.Entity("Capstone.Models.Itinerario", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("IdItinerario")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdItinerario"));
 
                     b.Property<int>("Durata")
                         .HasColumnType("int");
 
-                    b.Property<string>("Nome")
+                    b.Property<string>("ImmagineUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NomeItinerario")
                         .IsRequired()
                         .HasMaxLength(150)
                         .HasColumnType("nvarchar(150)");
@@ -261,7 +271,7 @@ namespace Capstone.Migrations
                     b.Property<int>("PaeseId")
                         .HasColumnType("int");
 
-                    b.HasKey("Id");
+                    b.HasKey("IdItinerario");
 
                     b.HasIndex("PaeseId");
 
@@ -270,134 +280,138 @@ namespace Capstone.Migrations
                     b.HasData(
                         new
                         {
-                            Id = 1,
+                            IdItinerario = 1,
                             Durata = 9,
-                            Nome = "Tour in Thailandia",
+                            ImmagineUrl = "https://example.com/images/thailandia.jpg",
+                            NomeItinerario = "Tour in Thailandia",
                             PaeseId = 1
                         },
                         new
                         {
-                            Id = 2,
+                            IdItinerario = 2,
                             Durata = 12,
-                            Nome = "Tour in Cina",
+                            ImmagineUrl = "https://example.com/images/cina.jpg",
+                            NomeItinerario = "Tour in Cina",
                             PaeseId = 2
                         },
                         new
                         {
-                            Id = 3,
+                            IdItinerario = 3,
                             Durata = 15,
-                            Nome = "Tour in Giappone",
+                            ImmagineUrl = "https://example.com/images/giappone.jpg",
+                            NomeItinerario = "Tour in Giappone",
                             PaeseId = 3
                         });
                 });
 
             modelBuilder.Entity("Capstone.Models.ItinerarioFasciaPrezzo", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("IdItinerarioFasciaPrezzo")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdItinerarioFasciaPrezzo"));
 
-                    b.Property<int>("FasciaDiPrezzoId")
+                    b.Property<int>("IdFasciaDiPrezzo")
                         .HasColumnType("int");
 
-                    b.Property<int>("ItinerarioId")
+                    b.Property<int>("IdItinerario")
                         .HasColumnType("int");
 
                     b.Property<decimal>("Prezzo")
                         .HasColumnType("decimal(10,2)");
 
-                    b.HasKey("Id");
+                    b.HasKey("IdItinerarioFasciaPrezzo");
 
-                    b.HasIndex("FasciaDiPrezzoId");
+                    b.HasIndex("IdFasciaDiPrezzo");
 
-                    b.HasIndex("ItinerarioId");
+                    b.HasIndex("IdItinerario");
 
                     b.ToTable("ItinerarioFascePrezzo");
 
                     b.HasData(
                         new
                         {
-                            Id = 1,
-                            FasciaDiPrezzoId = 1,
-                            ItinerarioId = 1,
+                            IdItinerarioFasciaPrezzo = 1,
+                            IdFasciaDiPrezzo = 1,
+                            IdItinerario = 1,
                             Prezzo = 999.99m
                         },
                         new
                         {
-                            Id = 2,
-                            FasciaDiPrezzoId = 2,
-                            ItinerarioId = 1,
+                            IdItinerarioFasciaPrezzo = 2,
+                            IdFasciaDiPrezzo = 2,
+                            IdItinerario = 1,
                             Prezzo = 1499.99m
                         },
                         new
                         {
-                            Id = 3,
-                            FasciaDiPrezzoId = 3,
-                            ItinerarioId = 1,
+                            IdItinerarioFasciaPrezzo = 3,
+                            IdFasciaDiPrezzo = 3,
+                            IdItinerario = 1,
                             Prezzo = 1999.99m
                         },
                         new
                         {
-                            Id = 4,
-                            FasciaDiPrezzoId = 1,
-                            ItinerarioId = 2,
+                            IdItinerarioFasciaPrezzo = 4,
+                            IdFasciaDiPrezzo = 1,
+                            IdItinerario = 2,
                             Prezzo = 1200.00m
                         },
                         new
                         {
-                            Id = 5,
-                            FasciaDiPrezzoId = 2,
-                            ItinerarioId = 2,
+                            IdItinerarioFasciaPrezzo = 5,
+                            IdFasciaDiPrezzo = 2,
+                            IdItinerario = 2,
                             Prezzo = 1700.00m
                         },
                         new
                         {
-                            Id = 6,
-                            FasciaDiPrezzoId = 3,
-                            ItinerarioId = 2,
+                            IdItinerarioFasciaPrezzo = 6,
+                            IdFasciaDiPrezzo = 3,
+                            IdItinerario = 2,
                             Prezzo = 2200.00m
                         },
                         new
                         {
-                            Id = 7,
-                            FasciaDiPrezzoId = 1,
-                            ItinerarioId = 3,
+                            IdItinerarioFasciaPrezzo = 7,
+                            IdFasciaDiPrezzo = 1,
+                            IdItinerario = 3,
                             Prezzo = 1500.00m
                         },
                         new
                         {
-                            Id = 8,
-                            FasciaDiPrezzoId = 2,
-                            ItinerarioId = 3,
+                            IdItinerarioFasciaPrezzo = 8,
+                            IdFasciaDiPrezzo = 2,
+                            IdItinerario = 3,
                             Prezzo = 2000.00m
                         },
                         new
                         {
-                            Id = 9,
-                            FasciaDiPrezzoId = 3,
-                            ItinerarioId = 3,
+                            IdItinerarioFasciaPrezzo = 9,
+                            IdFasciaDiPrezzo = 3,
+                            IdItinerario = 3,
                             Prezzo = 2500.00m
                         });
                 });
 
             modelBuilder.Entity("Capstone.Models.ItinerarioGiorno", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("IdItinerarioGiorno")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdItinerarioGiorno"));
 
                     b.Property<string>("Descrizione")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
 
                     b.Property<int>("Giorno")
                         .HasColumnType("int");
 
-                    b.Property<int>("ItinerarioId")
+                    b.Property<int>("IdItinerario")
                         .HasColumnType("int");
 
                     b.Property<string>("Titolo")
@@ -405,335 +419,390 @@ namespace Capstone.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
-                    b.HasKey("Id");
+                    b.HasKey("IdItinerarioGiorno");
 
-                    b.HasIndex("ItinerarioId");
+                    b.HasIndex("IdItinerario");
 
                     b.ToTable("ItinerarioGiorni");
 
                     b.HasData(
                         new
                         {
-                            Id = 1,
+                            IdItinerarioGiorno = 1,
                             Descrizione = "Arrivo all'aeroporto internazionale di Bangkok e trasferimento in hotel.",
                             Giorno = 1,
-                            ItinerarioId = 1,
+                            IdItinerario = 1,
                             Titolo = "Arrivo in Thailandia"
                         },
                         new
                         {
-                            Id = 2,
+                            IdItinerarioGiorno = 2,
                             Descrizione = "Visita al Tempio del Buddha di Smeraldo e alla Grande Sala del Trono.",
                             Giorno = 2,
-                            ItinerarioId = 1,
+                            IdItinerario = 1,
                             Titolo = "Visita al Tempio"
                         },
                         new
                         {
-                            Id = 3,
+                            IdItinerarioGiorno = 3,
                             Descrizione = "Esplorazione dei famosi mercati galleggianti e pranzo tipico.",
                             Giorno = 3,
-                            ItinerarioId = 1,
+                            IdItinerario = 1,
                             Titolo = "Mercati galleggianti"
                         },
                         new
                         {
-                            Id = 4,
+                            IdItinerarioGiorno = 4,
                             Descrizione = "Visita al Palazzo Reale e al Museo Nazionale.",
                             Giorno = 4,
-                            ItinerarioId = 1,
+                            IdItinerario = 1,
                             Titolo = "Tour della città"
                         },
                         new
                         {
-                            Id = 5,
+                            IdItinerarioGiorno = 5,
                             Descrizione = "Escursione a Ayutthaya, la storica capitale del regno del Siam.",
                             Giorno = 5,
-                            ItinerarioId = 1,
+                            IdItinerario = 1,
                             Titolo = "Visita a Ayutthaya"
                         },
                         new
                         {
-                            Id = 6,
+                            IdItinerarioGiorno = 6,
                             Descrizione = "Arrivo a Ko Samui per una giornata di relax sulle spiagge esotiche.",
                             Giorno = 6,
-                            ItinerarioId = 1,
+                            IdItinerario = 1,
                             Titolo = "Isola di Ko Samui"
                         },
                         new
                         {
-                            Id = 7,
+                            IdItinerarioGiorno = 7,
                             Descrizione = "Giornata dedicata allo snorkeling e visita delle isole vicine a Ko Samui.",
                             Giorno = 7,
-                            ItinerarioId = 1,
+                            IdItinerario = 1,
                             Titolo = "Snorkeling e visite alle isole"
                         },
                         new
                         {
-                            Id = 8,
+                            IdItinerarioGiorno = 8,
                             Descrizione = "Trasferimento a Chiang Mai e visita ai templi locali.",
                             Giorno = 8,
-                            ItinerarioId = 1,
+                            IdItinerario = 1,
                             Titolo = "Visita a Chiang Mai"
                         },
                         new
                         {
-                            Id = 9,
+                            IdItinerarioGiorno = 9,
                             Descrizione = "Tempo libero per shopping e ritorno all'aeroporto per il volo di ritorno.",
                             Giorno = 9,
-                            ItinerarioId = 1,
+                            IdItinerario = 1,
                             Titolo = "Partenza"
                         },
                         new
                         {
-                            Id = 10,
+                            IdItinerarioGiorno = 10,
                             Descrizione = "Arrivo a Pechino, trasferimento in hotel e visita alla Piazza Tiananmen.",
                             Giorno = 1,
-                            ItinerarioId = 2,
+                            IdItinerario = 2,
                             Titolo = "Arrivo in Cina"
                         },
                         new
                         {
-                            Id = 11,
+                            IdItinerarioGiorno = 11,
                             Descrizione = "Visita alla Città Proibita e al Tempio del Cielo.",
                             Giorno = 2,
-                            ItinerarioId = 2,
+                            IdItinerario = 2,
                             Titolo = "Città Proibita"
                         },
                         new
                         {
-                            Id = 12,
+                            IdItinerarioGiorno = 12,
                             Descrizione = "Escursione alla Grande Muraglia Cinese.",
                             Giorno = 3,
-                            ItinerarioId = 2,
+                            IdItinerario = 2,
                             Titolo = "Grande Muraglia"
                         },
                         new
                         {
-                            Id = 13,
+                            IdItinerarioGiorno = 13,
                             Descrizione = "Visita alla zona moderna di Pechino, comprensiva di un tour del quartiere commerciale.",
                             Giorno = 4,
-                            ItinerarioId = 2,
+                            IdItinerario = 2,
                             Titolo = "Pechino Moderna"
                         },
                         new
                         {
-                            Id = 14,
+                            IdItinerarioGiorno = 14,
                             Descrizione = "Volo per Xian e visita all'Esercito di Terracotta.",
                             Giorno = 5,
-                            ItinerarioId = 2,
+                            IdItinerario = 2,
                             Titolo = "Xian e l'Esercito di Terracotta"
                         },
                         new
                         {
-                            Id = 15,
+                            IdItinerarioGiorno = 15,
                             Descrizione = "Arrivo a Chengdu e visita al centro di ricerca per la protezione del panda gigante.",
                             Giorno = 6,
-                            ItinerarioId = 2,
+                            IdItinerario = 2,
                             Titolo = "Visita a Chengdu"
                         },
                         new
                         {
-                            Id = 16,
+                            IdItinerarioGiorno = 16,
                             Descrizione = "Visita a un monastero buddista e passeggiata nei parchi locali.",
                             Giorno = 7,
-                            ItinerarioId = 2,
+                            IdItinerario = 2,
                             Titolo = "Tour di Chengdu"
                         },
                         new
                         {
-                            Id = 17,
+                            IdItinerarioGiorno = 17,
                             Descrizione = "Visita ai templi e mercati storici della vecchia Pechino.",
                             Giorno = 8,
-                            ItinerarioId = 2,
+                            IdItinerario = 2,
                             Titolo = "Pechino Antica"
                         },
                         new
                         {
-                            Id = 18,
+                            IdItinerarioGiorno = 18,
                             Descrizione = "Partenza per Shanghai e visita al Bund e alla zona moderna della città.",
                             Giorno = 9,
-                            ItinerarioId = 2,
+                            IdItinerario = 2,
                             Titolo = "Viaggio a Shanghai"
                         },
                         new
                         {
-                            Id = 19,
+                            IdItinerarioGiorno = 19,
                             Descrizione = "Visita ai templi antichi e al Giardino Yu.",
                             Giorno = 10,
-                            ItinerarioId = 2,
+                            IdItinerario = 2,
                             Titolo = "Shanghai Antica"
                         },
                         new
                         {
-                            Id = 20,
+                            IdItinerarioGiorno = 20,
                             Descrizione = "Giornata dedicata allo shopping nei quartieri più famosi di Shanghai.",
                             Giorno = 11,
-                            ItinerarioId = 2,
+                            IdItinerario = 2,
                             Titolo = "Shopping a Shanghai"
                         },
                         new
                         {
-                            Id = 21,
+                            IdItinerarioGiorno = 21,
                             Descrizione = "Trasferimento all'aeroporto per il volo di ritorno.",
                             Giorno = 12,
-                            ItinerarioId = 2,
+                            IdItinerario = 2,
                             Titolo = "Partenza"
                         },
                         new
                         {
-                            Id = 22,
+                            IdItinerarioGiorno = 22,
                             Descrizione = "Arrivo a Tokyo e sistemazione in hotel.",
                             Giorno = 1,
-                            ItinerarioId = 3,
+                            IdItinerario = 3,
                             Titolo = "Arrivo in Giappone"
                         },
                         new
                         {
-                            Id = 23,
+                            IdItinerarioGiorno = 23,
                             Descrizione = "Visita al Tempio di Senso-ji e al mercato di Nakamise.",
                             Giorno = 2,
-                            ItinerarioId = 3,
+                            IdItinerario = 3,
                             Titolo = "Tempio di Asakusa"
                         },
                         new
                         {
-                            Id = 24,
+                            IdItinerarioGiorno = 24,
                             Descrizione = "Visita al Palazzo Imperiale e al parco circostante.",
                             Giorno = 3,
-                            ItinerarioId = 3,
+                            IdItinerario = 3,
                             Titolo = "Visita al Palazzo Imperiale"
                         },
                         new
                         {
-                            Id = 25,
+                            IdItinerarioGiorno = 25,
                             Descrizione = "Visita al Santuario Toshogu e al Parco Nazionale di Nikko.",
                             Giorno = 4,
-                            ItinerarioId = 3,
+                            IdItinerario = 3,
                             Titolo = "Escursione a Nikko"
                         },
                         new
                         {
-                            Id = 26,
+                            IdItinerarioGiorno = 26,
                             Descrizione = "Visita ai templi di Kyoto, incluso il famoso Tempio d’Oro.",
                             Giorno = 5,
-                            ItinerarioId = 3,
+                            IdItinerario = 3,
                             Titolo = "Visita a Kyoto"
                         },
                         new
                         {
-                            Id = 27,
+                            IdItinerarioGiorno = 27,
                             Descrizione = "Escursione a Nara, famosa per il Parco dei Cervi e il Tempio Todai-ji.",
                             Giorno = 6,
-                            ItinerarioId = 3,
+                            IdItinerario = 3,
                             Titolo = "Nara"
                         },
                         new
                         {
-                            Id = 28,
+                            IdItinerarioGiorno = 28,
                             Descrizione = "Esplorazione di Osaka, con visita al Castello di Osaka e al quartiere Dotonbori.",
                             Giorno = 7,
-                            ItinerarioId = 3,
+                            IdItinerario = 3,
                             Titolo = "Osaka"
                         },
                         new
                         {
-                            Id = 29,
+                            IdItinerarioGiorno = 29,
                             Descrizione = "Visita al Parco della Pace e al Museo della Pace di Hiroshima.",
                             Giorno = 8,
-                            ItinerarioId = 3,
+                            IdItinerario = 3,
                             Titolo = "Hiroshima"
                         },
                         new
                         {
-                            Id = 30,
+                            IdItinerarioGiorno = 30,
                             Descrizione = "Escursione all'isola di Miyajima, famosa per il Torii galleggiante.",
                             Giorno = 9,
-                            ItinerarioId = 3,
+                            IdItinerario = 3,
                             Titolo = "Miyajima"
                         },
                         new
                         {
-                            Id = 31,
+                            IdItinerarioGiorno = 31,
                             Descrizione = "Visita alla città di Kobe, famosa per la carne di manzo Kobe.",
                             Giorno = 10,
-                            ItinerarioId = 3,
+                            IdItinerario = 3,
                             Titolo = "Kobe"
                         },
                         new
                         {
-                            Id = 32,
+                            IdItinerarioGiorno = 32,
                             Descrizione = "Visita alla zona termale di Hakone e alle sue splendide vedute del Monte Fuji.",
                             Giorno = 11,
-                            ItinerarioId = 3,
+                            IdItinerario = 3,
                             Titolo = "Hakone"
                         },
                         new
                         {
-                            Id = 33,
+                            IdItinerarioGiorno = 33,
                             Descrizione = "Giornata dedicata a Tokyo Disneyland.",
                             Giorno = 12,
-                            ItinerarioId = 3,
+                            IdItinerario = 3,
                             Titolo = "Tokyo Disneyland"
                         },
                         new
                         {
-                            Id = 34,
+                            IdItinerarioGiorno = 34,
                             Descrizione = "Giornata di shopping a Shibuya e Shinjuku.",
                             Giorno = 13,
-                            ItinerarioId = 3,
+                            IdItinerario = 3,
                             Titolo = "Shopping a Tokyo"
                         },
                         new
                         {
-                            Id = 35,
+                            IdItinerarioGiorno = 35,
                             Descrizione = "Escursione al Monte Fuji e visita ai suoi laghi.",
                             Giorno = 14,
-                            ItinerarioId = 3,
+                            IdItinerario = 3,
                             Titolo = "Escursione al Monte Fuji"
                         },
                         new
                         {
-                            Id = 36,
+                            IdItinerarioGiorno = 36,
                             Descrizione = "Trasferimento all'aeroporto di Tokyo per il volo di ritorno.",
                             Giorno = 15,
-                            ItinerarioId = 3,
+                            IdItinerario = 3,
                             Titolo = "Partenza"
                         });
                 });
 
             modelBuilder.Entity("Capstone.Models.Paese", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("IdPaese")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdPaese"));
 
                     b.Property<string>("Nome")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.HasKey("Id");
+                    b.HasKey("IdPaese");
 
                     b.ToTable("Paesi");
 
                     b.HasData(
                         new
                         {
-                            Id = 1,
+                            IdPaese = 1,
                             Nome = "Thailandia"
                         },
                         new
                         {
-                            Id = 2,
+                            IdPaese = 2,
                             Nome = "Cina"
                         },
                         new
                         {
-                            Id = 3,
+                            IdPaese = 3,
                             Nome = "Giappone"
+                        });
+                });
+
+            modelBuilder.Entity("Capstone.Models.Partenza", b =>
+                {
+                    b.Property<int>("IdPartenza")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdPartenza"));
+
+                    b.Property<DateOnly>("DataPartenza")
+                        .HasColumnType("date");
+
+                    b.Property<int>("IdItinerario")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PostiDisponibili")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Stato")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("IdPartenza");
+
+                    b.HasIndex("IdItinerario");
+
+                    b.ToTable("Partenze");
+
+                    b.HasData(
+                        new
+                        {
+                            IdPartenza = 1,
+                            DataPartenza = new DateOnly(2025, 6, 10),
+                            IdItinerario = 1,
+                            PostiDisponibili = 15,
+                            Stato = "Disponibile"
+                        },
+                        new
+                        {
+                            IdPartenza = 2,
+                            DataPartenza = new DateOnly(2025, 7, 20),
+                            IdItinerario = 1,
+                            PostiDisponibili = 10,
+                            Stato = "Disponibile"
+                        },
+                        new
+                        {
+                            IdPartenza = 3,
+                            DataPartenza = new DateOnly(2025, 8, 5),
+                            IdItinerario = 2,
+                            PostiDisponibili = 5,
+                            Stato = "Sold Out"
                         });
                 });
 
@@ -851,27 +920,35 @@ namespace Capstone.Migrations
                 {
                     b.HasOne("Capstone.Models.Carrello.Carrello", "Carrello")
                         .WithMany("CarrelloItems")
-                        .HasForeignKey("CarrelloId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Capstone.Models.FasciaDiPrezzo", "FasciaDiPrezzo")
-                        .WithMany()
-                        .HasForeignKey("FasciaDiPrezzoId")
+                        .HasForeignKey("IdCarrello")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Capstone.Models.Itinerario", "Itinerario")
                         .WithMany()
-                        .HasForeignKey("ItinerarioId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasForeignKey("IdItinerario")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("Capstone.Models.ItinerarioFasciaPrezzo", "ItinerarioFasciaPrezzo")
+                        .WithMany()
+                        .HasForeignKey("IdItinerarioFasciaPrezzo")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("Capstone.Models.Partenza", "Partenza")
+                        .WithMany()
+                        .HasForeignKey("IdPartenza")
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Carrello");
 
-                    b.Navigation("FasciaDiPrezzo");
-
                     b.Navigation("Itinerario");
+
+                    b.Navigation("ItinerarioFasciaPrezzo");
+
+                    b.Navigation("Partenza");
                 });
 
             modelBuilder.Entity("Capstone.Models.Itinerario", b =>
@@ -889,13 +966,13 @@ namespace Capstone.Migrations
                 {
                     b.HasOne("Capstone.Models.FasciaDiPrezzo", "FasciaDiPrezzo")
                         .WithMany("Itinerari")
-                        .HasForeignKey("FasciaDiPrezzoId")
+                        .HasForeignKey("IdFasciaDiPrezzo")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Capstone.Models.Itinerario", "Itinerario")
                         .WithMany("FasceDiPrezzo")
-                        .HasForeignKey("ItinerarioId")
+                        .HasForeignKey("IdItinerario")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -908,7 +985,18 @@ namespace Capstone.Migrations
                 {
                     b.HasOne("Capstone.Models.Itinerario", "Itinerario")
                         .WithMany("ItinerarioGiorni")
-                        .HasForeignKey("ItinerarioId")
+                        .HasForeignKey("IdItinerario")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Itinerario");
+                });
+
+            modelBuilder.Entity("Capstone.Models.Partenza", b =>
+                {
+                    b.HasOne("Capstone.Models.Itinerario", "Itinerario")
+                        .WithMany("Partenze")
+                        .HasForeignKey("IdItinerario")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -976,6 +1064,8 @@ namespace Capstone.Migrations
                     b.Navigation("FasceDiPrezzo");
 
                     b.Navigation("ItinerarioGiorni");
+
+                    b.Navigation("Partenze");
                 });
 
             modelBuilder.Entity("Capstone.Models.Paese", b =>
