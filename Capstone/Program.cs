@@ -110,6 +110,7 @@ try
     builder.Services.AddScoped<PaeseService>();
     builder.Services.AddScoped<FasceDiPrezzoService>();
     builder.Services.AddScoped<ItinerarioService>();
+    builder.Services.AddScoped<RecensioneService>();
 
 
     builder.Services.AddDbContext<ApplicationDbContext>(options =>

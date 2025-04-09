@@ -150,6 +150,8 @@ namespace Capstone.Data
                 .HasForeignKey(r => r.UserId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+           
+
             var adminId = Guid.NewGuid().ToString();
         var userId = Guid.NewGuid().ToString();
 
