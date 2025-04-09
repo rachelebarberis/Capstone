@@ -20,7 +20,6 @@ namespace Capstone.Controllers
             _logger = logger;
         }
 
-        // GET: api/paese
         [HttpGet]
         public async Task<IActionResult> GetAllPaese()
         {
@@ -36,54 +35,85 @@ namespace Capstone.Controllers
             }
         }
 
-        // GET: api/paese/{id}
+
         [HttpGet("{id}")]
         public async Task<IActionResult> GetPaeseById(int id)
         {
-            var paese = await _paeseService.GetPaeseByIdAsync(id);
-            if (paese == null)
-                return NotFound($"Paese con ID {id} non trovato.");
+            try
+            {
+                var paese = await _paeseService.GetPaeseByIdAsync(id);
+                if (paese == null)
+                    return NotFound($"Paese con ID {id} non trovato.");
 
-            return Ok(paese);
+                return Ok(paese);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Errore durante il recupero del Paese con ID {id}");
+                return StatusCode(500, "Errore interno del server");
+            }
         }
 
-        // POST: api/paese
         [HttpPost]
         public async Task<IActionResult> CreatePaese([FromBody] AddPaeseRequestDto addPaeseRequestDto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var result = await _paeseService.CreatePaeseAsync(addPaeseRequestDto);
-            if (!result)
-                return StatusCode(500, "Errore durante la creazione del paese.");
+            try
+            {
+                var result = await _paeseService.CreatePaeseAsync(addPaeseRequestDto);
+                if (!result)
+                    return StatusCode(500, "Errore durante la creazione del paese.");
 
-            return Ok("Paese creato con successo.");
+                return Ok("Paese creato con successo.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Errore durante la creazione del Paese");
+                return StatusCode(500, "Errore interno del server");
+            }
         }
 
-        // PUT: api/paese/{id}
+
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdatePaese(int id, [FromBody] UpdatePaeseRequestDto updatePaeseRequestDto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var result = await _paeseService.UpdatePaeseAsync(id, updatePaeseRequestDto);
-            if (!result)
-                return NotFound($"Paese con ID {id} non trovato o aggiornamento fallito.");
+            try
+            {
+                var result = await _paeseService.UpdatePaeseAsync(id, updatePaeseRequestDto);
+                if (!result)
+                    return NotFound($"Paese con ID {id} non trovato o aggiornamento fallito.");
 
-            return Ok("Paese aggiornato con successo.");
+                return Ok("Paese aggiornato con successo.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Errore durante l'aggiornamento del Paese con ID {id}");
+                return StatusCode(500, "Errore interno del server");
+            }
         }
 
-        // DELETE: api/paese/{id}
+  
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeletePaese(int id)
         {
-            var result = await _paeseService.DeletePaeseAsync(id);
-            if (!result)
-                return NotFound($"Paese con ID {id} non trovato o eliminazione fallita.");
+            try
+            {
+                var result = await _paeseService.DeletePaeseAsync(id);
+                if (!result)
+                    return NotFound($"Paese con ID {id} non trovato o eliminazione fallita.");
 
-            return Ok("Paese eliminato con successo.");
+                return Ok("Paese eliminato con successo.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"Errore durante l'eliminazione del Paese con ID {id}");
+                return StatusCode(500, "Errore interno del server");
+            }
         }
     }
 }
