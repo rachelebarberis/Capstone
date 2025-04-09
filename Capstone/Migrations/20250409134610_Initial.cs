@@ -364,8 +364,8 @@ namespace Capstone.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "030b3aa7-ac91-4b42-8fa0-bf300b74497a", "030b3aa7-ac91-4b42-8fa0-bf300b74497a", "Admin", "ADMIN" },
-                    { "d5b3b6a8-a207-4c18-9d64-9ad7c997477c", "d5b3b6a8-a207-4c18-9d64-9ad7c997477c", "User", "USER" }
+                    { "5b42e37b-c034-46f8-a335-a431c05ba0e5", "5b42e37b-c034-46f8-a335-a431c05ba0e5", "Admin", "ADMIN" },
+                    { "5bd0d4b1-2751-4fbe-812e-20a860522ae2", "5bd0d4b1-2751-4fbe-812e-20a860522ae2", "User", "USER" }
                 });
 
             migrationBuilder.InsertData(

@@ -7,8 +7,10 @@ namespace Capstone.DTOs.Itinerario
      
             [Required]
             public string NomeItinerario { get; set; }
+        [Required]
+        public string ImmagineUrl { get; set; }
 
-            [Required]
+        [Required]
             [Range(1, int.MaxValue, ErrorMessage = "La durata deve essere maggiore di 0.")]
             public int Durata { get; set; }
 

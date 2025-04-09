@@ -6,6 +6,8 @@ namespace Capstone.DTOs.Itinerario
     {
         [Required]
         public int Giorno { get; set; }
+        [Required]
+        public string Titolo { get; set; }
 
         [Required]
         public string Descrizione { get; set; }

@@ -44,7 +44,7 @@ public class ItinerarioController : ControllerBase
         {
             return NotFound();
         }
-        return NoContent();
+        return Ok(itinerario);
     }
 
     // POST: api/itinerari
@@ -56,7 +56,7 @@ public class ItinerarioController : ControllerBase
         {
             return NotFound();
         }
-        return NoContent();
+        return Ok(itinerario);
 
     }
 
@@ -70,6 +70,6 @@ public class ItinerarioController : ControllerBase
             return NotFound();
         }
         await _itinerarioService.DeleteItinerarioAsync(id);
-        return NoContent();
+        return Ok(itinerario);
     }
 }

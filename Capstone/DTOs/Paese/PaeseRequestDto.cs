@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Capstone.DTOs.Itinerario;
 
 namespace Capstone.DTOs.Paese
 {
@@ -10,5 +11,7 @@ namespace Capstone.DTOs.Paese
         [Required]
         [StringLength(100)]
         public required string Nome { get; set; }
+
+
     }
 }

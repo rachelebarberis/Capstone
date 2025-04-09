@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Capstone.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250409094426_Initial")]
+    [Migration("20250409134610_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -54,15 +54,15 @@ namespace Capstone.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "030b3aa7-ac91-4b42-8fa0-bf300b74497a",
-                            ConcurrencyStamp = "030b3aa7-ac91-4b42-8fa0-bf300b74497a",
+                            Id = "5b42e37b-c034-46f8-a335-a431c05ba0e5",
+                            ConcurrencyStamp = "5b42e37b-c034-46f8-a335-a431c05ba0e5",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "d5b3b6a8-a207-4c18-9d64-9ad7c997477c",
-                            ConcurrencyStamp = "d5b3b6a8-a207-4c18-9d64-9ad7c997477c",
+                            Id = "5bd0d4b1-2751-4fbe-812e-20a860522ae2",
+                            ConcurrencyStamp = "5bd0d4b1-2751-4fbe-812e-20a860522ae2",
                             Name = "User",
                             NormalizedName = "USER"
                         });
@@ -1003,7 +1003,7 @@ namespace Capstone.Migrations
                         .IsRequired();
 
                     b.HasOne("Capstone.Models.Itinerario", "Itinerario")
-                        .WithMany("FasceDiPrezzo")
+                        .WithMany("ItinerarioFascePrezzo")
                         .HasForeignKey("IdItinerario")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1110,7 +1110,7 @@ namespace Capstone.Migrations
 
             modelBuilder.Entity("Capstone.Models.Itinerario", b =>
                 {
-                    b.Navigation("FasceDiPrezzo");
+                    b.Navigation("ItinerarioFascePrezzo");
 
                     b.Navigation("ItinerarioGiorni");
 

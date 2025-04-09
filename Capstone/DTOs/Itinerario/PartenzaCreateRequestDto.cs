@@ -6,5 +6,7 @@ namespace Capstone.DTOs.Itinerario
     {
         [Required]
         public DateOnly DataPartenza { get; set; }
+
+        public string Stato { get; set; }
     }
 }

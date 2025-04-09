@@ -109,6 +109,7 @@ try
     builder.Services.AddScoped<RoleManager<ApplicationRole>>();
     builder.Services.AddScoped<PaeseService>();
     builder.Services.AddScoped<FasceDiPrezzoService>();
+    builder.Services.AddScoped<ItinerarioService>();
 
 
     builder.Services.AddDbContext<ApplicationDbContext>(options =>
