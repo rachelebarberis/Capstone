@@ -28,7 +28,7 @@ namespace Capstone.Models
 
         public List<ItinerarioGiorno> ItinerarioGiorni { get; set; } = new();
 
-        public List<ItinerarioFasciaPrezzo> FasceDiPrezzo { get; set; } = new();
+        public List<ItinerarioFasciaPrezzo> ItinerarioFascePrezzo { get; set; } = new();
 
         public List<Partenza> Partenze { get; set; } = new();
 

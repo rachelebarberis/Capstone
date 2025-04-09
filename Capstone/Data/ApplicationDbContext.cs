@@ -86,7 +86,7 @@ namespace Capstone.Data
 
             modelBuilder.Entity<ItinerarioFasciaPrezzo>()
                 .HasOne(p => p.Itinerario)
-                .WithMany(i => i.FasceDiPrezzo)
+                .WithMany(i => i.ItinerarioFascePrezzo)
                 .HasForeignKey(p => p.IdItinerario);
 
             modelBuilder.Entity<ItinerarioFasciaPrezzo>()
