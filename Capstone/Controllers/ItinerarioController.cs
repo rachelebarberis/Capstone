@@ -51,6 +51,25 @@ public class ItinerarioController : ControllerBase
         }
     }
 
+    [HttpPost]
+    public async Task<ActionResult<ItinerarioCreateRequestDto>> CreateItinerario([FromBody] ItinerarioCreateRequestDto itinerarioCreateRequestDto)
+    {
+        try
+        {
+            var itinerario = await _itinerarioService.CreateItinerarioAsync(itinerarioCreateRequestDto);
+            if (itinerario == null)
+            {
+                return NotFound();
+            }
+            return Ok(itinerario);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Errore durante la creazione dell'itinerario");
+            return StatusCode(500, "Errore interno del server");
+        }
+    }
+
     // PUT: api/itinerari/{id}
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdateItinerario(int id, [FromBody] ItinerarioUpdateRequestDto itinerarioUpdateRequestDto)
@@ -71,25 +90,7 @@ public class ItinerarioController : ControllerBase
         }
     }
 
-    // POST: api/itinerari
-    [HttpPost]
-    public async Task<ActionResult<ItinerarioCreateRequestDto>> CreateItinerario([FromBody] ItinerarioCreateRequestDto itinerarioCreateRequestDto)
-    {
-        try
-        {
-            var itinerario = await _itinerarioService.CreateItinerarioAsync(itinerarioCreateRequestDto);
-            if (itinerario == null)
-            {
-                return NotFound();
-            }
-            return Ok(itinerario);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Errore durante la creazione dell'itinerario");
-            return StatusCode(500, "Errore interno del server");
-        }
-    }
+    
 
     // DELETE: api/itinerari/{id}
     [HttpDelete("{id}")]
@@ -111,4 +112,26 @@ public class ItinerarioController : ControllerBase
             return StatusCode(500, "Errore interno del server");
         }
     }
+
+    // GET: api/itinerari/paese/nome/{nomePaese}
+    [HttpGet("paese/nome/{nomePaese}")]
+    public async Task<ActionResult<ItinerarioGetRequestDto>> GetItinerariByNomePaese(string nomePaese)
+    {
+        try
+        {
+            var itinerari = await _itinerarioService.GetItinerariByNomePaeseAsync(nomePaese);
+            if (itinerari == null || !itinerari.Any())
+            {
+                return NotFound($"Nessun itinerario trovato per il paese con nome {nomePaese}");
+            }
+            return Ok(itinerari);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"Errore durante il recupero degli itinerari per il paese con nome {nomePaese}");
+            return StatusCode(500, "Errore interno del server");
+        }
+    }
+
+
 }
