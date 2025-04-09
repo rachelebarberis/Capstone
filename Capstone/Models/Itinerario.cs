@@ -31,5 +31,7 @@ namespace Capstone.Models
         public List<ItinerarioFasciaPrezzo> FasceDiPrezzo { get; set; } = new();
 
         public List<Partenza> Partenze { get; set; } = new();
+
+        public List<Recensione> Recensioni { get; set; } = new();
     }
 }

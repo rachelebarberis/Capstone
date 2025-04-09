@@ -19,6 +19,7 @@ namespace Capstone.Data
         public DbSet<Partenza> Partenze { get; set; }
         public DbSet<Carrello> Carrelli { get; set; }
         public DbSet<CarrelloItem> CarrelloItems { get; set; }
+        public DbSet<Recensione> Recensioni {  get; set; }
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
 
     public DbSet<ApplicationRole> ApplicationRoles { get; set; }
@@ -135,6 +136,19 @@ namespace Capstone.Data
             modelBuilder.Entity<CarrelloItem>()
                 .Property(ci => ci.Prezzo)
                 .HasColumnType("decimal(10,2)");
+
+            modelBuilder.Entity<Recensione>()
+       .HasOne(r => r.Itinerario)
+       .WithMany(i => i.Recensioni)  // Relazione 1 a molti: un itinerario può avere molte recensioni
+       .HasForeignKey(r => r.IdItinerario)
+       .OnDelete(DeleteBehavior.Cascade);  // Impostazione dell'eliminazione a cascata
+
+            // Configurazione della relazione tra Recensione e User
+            modelBuilder.Entity<Recensione>()
+                .HasOne<ApplicationUser>()  // ApplicationUser è la classe di utente di ASP.NET Identity
+                .WithMany()  // Un utente può avere molte recensioni
+                .HasForeignKey(r => r.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             var adminId = Guid.NewGuid().ToString();
         var userId = Guid.NewGuid().ToString();

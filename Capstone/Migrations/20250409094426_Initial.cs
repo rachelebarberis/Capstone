@@ -293,6 +293,34 @@ namespace Capstone.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Recensioni",
+                columns: table => new
+                {
+                    IdRecensione = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Testo = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
+                    Valutazione = table.Column<int>(type: "int", nullable: false),
+                    IdItinerario = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Recensioni", x => x.IdRecensione);
+                    table.ForeignKey(
+                        name: "FK_Recensioni_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Recensioni_Itinerari_IdItinerario",
+                        column: x => x.IdItinerario,
+                        principalTable: "Itinerari",
+                        principalColumn: "IdItinerario",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "CarrelloItems",
                 columns: table => new
                 {
@@ -336,8 +364,8 @@ namespace Capstone.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "2b57dd07-6b6b-4815-864e-371fd78d04f7", "2b57dd07-6b6b-4815-864e-371fd78d04f7", "Admin", "ADMIN" },
-                    { "5a659c0a-2b3a-45d3-a1ff-3edc95ec40de", "5a659c0a-2b3a-45d3-a1ff-3edc95ec40de", "User", "USER" }
+                    { "030b3aa7-ac91-4b42-8fa0-bf300b74497a", "030b3aa7-ac91-4b42-8fa0-bf300b74497a", "Admin", "ADMIN" },
+                    { "d5b3b6a8-a207-4c18-9d64-9ad7c997477c", "d5b3b6a8-a207-4c18-9d64-9ad7c997477c", "User", "USER" }
                 });
 
             migrationBuilder.InsertData(
@@ -522,6 +550,16 @@ namespace Capstone.Migrations
                 name: "IX_Partenze_IdItinerario",
                 table: "Partenze",
                 column: "IdItinerario");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Recensioni_IdItinerario",
+                table: "Recensioni",
+                column: "IdItinerario");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Recensioni_UserId",
+                table: "Recensioni",
+                column: "UserId");
         }
 
         /// <inheritdoc />
@@ -549,10 +587,10 @@ namespace Capstone.Migrations
                 name: "ItinerarioGiorni");
 
             migrationBuilder.DropTable(
-                name: "AspNetRoles");
+                name: "Recensioni");
 
             migrationBuilder.DropTable(
-                name: "AspNetUsers");
+                name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "Carrelli");
@@ -562,6 +600,9 @@ namespace Capstone.Migrations
 
             migrationBuilder.DropTable(
                 name: "Partenze");
+
+            migrationBuilder.DropTable(
+                name: "AspNetUsers");
 
             migrationBuilder.DropTable(
                 name: "FasceDiPrezzo");

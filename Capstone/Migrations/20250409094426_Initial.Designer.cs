@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Capstone.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250409092612_Initial")]
+    [Migration("20250409094426_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -54,15 +54,15 @@ namespace Capstone.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "2b57dd07-6b6b-4815-864e-371fd78d04f7",
-                            ConcurrencyStamp = "2b57dd07-6b6b-4815-864e-371fd78d04f7",
+                            Id = "030b3aa7-ac91-4b42-8fa0-bf300b74497a",
+                            ConcurrencyStamp = "030b3aa7-ac91-4b42-8fa0-bf300b74497a",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "5a659c0a-2b3a-45d3-a1ff-3edc95ec40de",
-                            ConcurrencyStamp = "5a659c0a-2b3a-45d3-a1ff-3edc95ec40de",
+                            Id = "d5b3b6a8-a207-4c18-9d64-9ad7c997477c",
+                            ConcurrencyStamp = "d5b3b6a8-a207-4c18-9d64-9ad7c997477c",
                             Name = "User",
                             NormalizedName = "USER"
                         });
@@ -806,6 +806,38 @@ namespace Capstone.Migrations
                         });
                 });
 
+            modelBuilder.Entity("Capstone.Models.Recensione", b =>
+                {
+                    b.Property<int>("IdRecensione")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdRecensione"));
+
+                    b.Property<int>("IdItinerario")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Testo")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("Valutazione")
+                        .HasColumnType("int");
+
+                    b.HasKey("IdRecensione");
+
+                    b.HasIndex("IdItinerario");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Recensioni");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.Property<int>("Id")
@@ -1003,6 +1035,23 @@ namespace Capstone.Migrations
                     b.Navigation("Itinerario");
                 });
 
+            modelBuilder.Entity("Capstone.Models.Recensione", b =>
+                {
+                    b.HasOne("Capstone.Models.Itinerario", "Itinerario")
+                        .WithMany("Recensioni")
+                        .HasForeignKey("IdItinerario")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Capstone.Models.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Itinerario");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Capstone.Models.ApplicationRole", null)
@@ -1066,6 +1115,8 @@ namespace Capstone.Migrations
                     b.Navigation("ItinerarioGiorni");
 
                     b.Navigation("Partenze");
+
+                    b.Navigation("Recensioni");
                 });
 
             modelBuilder.Entity("Capstone.Models.Paese", b =>
