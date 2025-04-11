@@ -373,8 +373,8 @@ namespace Capstone.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "4b93ad2b-3e8a-4617-82e5-65d3300b94b7", "4b93ad2b-3e8a-4617-82e5-65d3300b94b7", "Admin", "ADMIN" },
-                    { "ccd897ef-cb5d-4bea-9af9-3c47c86d3355", "ccd897ef-cb5d-4bea-9af9-3c47c86d3355", "User", "USER" }
+                    { "c6c361ba-319e-489e-b6af-8b9e919ec95a", "c6c361ba-319e-489e-b6af-8b9e919ec95a", "User", "USER" },
+                    { "f5dd37b7-6cdf-47fd-b8a8-ff84f399b1c1", "f5dd37b7-6cdf-47fd-b8a8-ff84f399b1c1", "Admin", "ADMIN" }
                 });
 
             migrationBuilder.InsertData(
@@ -382,8 +382,8 @@ namespace Capstone.Migrations
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "FirstName", "ImgUserPath", "LastName", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
                 values: new object[,]
                 {
-                    { "1", 0, "08399e0f-9230-4cfe-a22d-2cdd7f3b3fd6", "user1@example.com", false, "Mario", null, "Rossi", false, null, "USER1@EXAMPLE.COM", "USER1@EXAMPLE.COM", "AQAAAAIAAYagAAAAED0v+UUOGkjKoHGnwjmc7t6eTQc8TYZkwnTu8weseDCvKAoPfj9ZE3ZolUADjFknkg==", null, false, "c1c9e03c-a638-4ea6-a8cd-27c7c1b45811", false, "user1@example.com" },
-                    { "2", 0, "54f2ed46-a8c6-4141-bd8b-54c84f43b408", "user2@example.com", false, "Luca", null, "Bianchi", false, null, "USER2@EXAMPLE.COM", "USER2@EXAMPLE.COM", "AQAAAAIAAYagAAAAECzTsYymz+60UGHOSDq4CMxcv+fs12728XqcvDwp4oMzdNMcTdeXunZoWyKCH5a00A==", null, false, "d4a26207-d30c-4e62-bf54-49dc559a77a6", false, "user2@example.com" }
+                    { "1", 0, "b0579424-bd16-428e-af3d-39822b9bed47", "user1@example.com", false, "Mario", null, "Rossi", false, null, "USER1@EXAMPLE.COM", "USER1@EXAMPLE.COM", "AQAAAAIAAYagAAAAEOi617H9c0VvX+85KrMZvJRjKtGg2xxcgFMefqtZHScYJ1XI+1wLgNLbvvmHI9K1Vg==", null, false, "782d35db-43bb-4ea3-a872-fbc791e4ede6", false, "user1@example.com" },
+                    { "2", 0, "c8d1d88f-ebb0-4eed-baec-d69f3318b7cf", "user2@example.com", false, "Luca", null, "Bianchi", false, null, "USER2@EXAMPLE.COM", "USER2@EXAMPLE.COM", "AQAAAAIAAYagAAAAELkbiKLXbJJa7SjU6I/QY9JERobBnytwWeEQ+71RYI1OnDAAMIUozDIMpO9yQ4MD1w==", null, false, "40f0bdfc-9916-4fa5-91e1-9f30a6bec4c8", false, "user2@example.com" }
                 });
 
             migrationBuilder.InsertData(
@@ -411,9 +411,9 @@ namespace Capstone.Migrations
                 columns: new[] { "IdItinerario", "Durata", "ImmagineUrl", "NomeItinerario", "PaeseId" },
                 values: new object[,]
                 {
-                    { 1, 9, "https://example.com/images/thailandia.jpg", "Tour in Thailandia", 1 },
-                    { 2, 12, "https://example.com/images/cina.jpg", "Tour in Cina", 2 },
-                    { 3, 15, "https://example.com/images/giappone.jpg", "Tour in Giappone", 3 }
+                    { 1, 9, "https://hips.hearstapps.com/cosmopolitan-it/assets/17/42/1508506981-thailandia-bangkok-cosa-visitare.jpg", "Tour in Thailandia", 1 },
+                    { 2, 12, "https://www.wwf.ch/sites/default/files/styles/page_cover_large_16_9/public/2017-02/Die-grosse-Mauer-in-China.jpg?h=6d1dd041&itok=4DpZ4xH4", "Tour in Cina", 2 },
+                    { 3, 15, "https://img.freepik.com/foto-gratuito/la-fioritura-dei-ciliegi-in-primavera-la-pagoda-chureito-e-il-monte-fuji-al-tramonto-in-giappone_335224-215.jpg", "Tour in Giappone", 3 }
                 });
 
             migrationBuilder.InsertData(

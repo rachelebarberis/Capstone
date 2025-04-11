@@ -196,7 +196,7 @@ namespace Capstone.Data
          NomeItinerario = "Tour in Thailandia",
          Durata = 9,
          PaeseId = 1,
-         ImmagineUrl = "https://example.com/images/thailandia.jpg" 
+         ImmagineUrl = "https://hips.hearstapps.com/cosmopolitan-it/assets/17/42/1508506981-thailandia-bangkok-cosa-visitare.jpg"
      },
      new Itinerario
      {
@@ -204,7 +204,7 @@ namespace Capstone.Data
          NomeItinerario = "Tour in Cina",
          Durata = 12,
          PaeseId = 2,
-         ImmagineUrl = "https://example.com/images/cina.jpg"  
+         ImmagineUrl = "https://www.wwf.ch/sites/default/files/styles/page_cover_large_16_9/public/2017-02/Die-grosse-Mauer-in-China.jpg?h=6d1dd041&itok=4DpZ4xH4"
      },
      new Itinerario
      {
@@ -212,7 +212,7 @@ namespace Capstone.Data
          NomeItinerario = "Tour in Giappone",
          Durata = 15,
          PaeseId = 3,
-         ImmagineUrl = "https://example.com/images/giappone.jpg"  
+         ImmagineUrl = "https://img.freepik.com/foto-gratuito/la-fioritura-dei-ciliegi-in-primavera-la-pagoda-chureito-e-il-monte-fuji-al-tramonto-in-giappone_335224-215.jpg"
      }
  );
 

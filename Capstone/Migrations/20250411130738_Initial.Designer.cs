@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Capstone.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250411094308_Initial")]
+    [Migration("20250411130738_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -54,15 +54,15 @@ namespace Capstone.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "4b93ad2b-3e8a-4617-82e5-65d3300b94b7",
-                            ConcurrencyStamp = "4b93ad2b-3e8a-4617-82e5-65d3300b94b7",
+                            Id = "f5dd37b7-6cdf-47fd-b8a8-ff84f399b1c1",
+                            ConcurrencyStamp = "f5dd37b7-6cdf-47fd-b8a8-ff84f399b1c1",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "ccd897ef-cb5d-4bea-9af9-3c47c86d3355",
-                            ConcurrencyStamp = "ccd897ef-cb5d-4bea-9af9-3c47c86d3355",
+                            Id = "c6c361ba-319e-489e-b6af-8b9e919ec95a",
+                            ConcurrencyStamp = "c6c361ba-319e-489e-b6af-8b9e919ec95a",
                             Name = "User",
                             NormalizedName = "USER"
                         });
@@ -148,7 +148,7 @@ namespace Capstone.Migrations
                         {
                             Id = "1",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "08399e0f-9230-4cfe-a22d-2cdd7f3b3fd6",
+                            ConcurrencyStamp = "b0579424-bd16-428e-af3d-39822b9bed47",
                             Email = "user1@example.com",
                             EmailConfirmed = false,
                             FirstName = "Mario",
@@ -156,9 +156,9 @@ namespace Capstone.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "USER1@EXAMPLE.COM",
                             NormalizedUserName = "USER1@EXAMPLE.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAED0v+UUOGkjKoHGnwjmc7t6eTQc8TYZkwnTu8weseDCvKAoPfj9ZE3ZolUADjFknkg==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEOi617H9c0VvX+85KrMZvJRjKtGg2xxcgFMefqtZHScYJ1XI+1wLgNLbvvmHI9K1Vg==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "c1c9e03c-a638-4ea6-a8cd-27c7c1b45811",
+                            SecurityStamp = "782d35db-43bb-4ea3-a872-fbc791e4ede6",
                             TwoFactorEnabled = false,
                             UserName = "user1@example.com"
                         },
@@ -166,7 +166,7 @@ namespace Capstone.Migrations
                         {
                             Id = "2",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "54f2ed46-a8c6-4141-bd8b-54c84f43b408",
+                            ConcurrencyStamp = "c8d1d88f-ebb0-4eed-baec-d69f3318b7cf",
                             Email = "user2@example.com",
                             EmailConfirmed = false,
                             FirstName = "Luca",
@@ -174,9 +174,9 @@ namespace Capstone.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "USER2@EXAMPLE.COM",
                             NormalizedUserName = "USER2@EXAMPLE.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAECzTsYymz+60UGHOSDq4CMxcv+fs12728XqcvDwp4oMzdNMcTdeXunZoWyKCH5a00A==",
+                            PasswordHash = "AQAAAAIAAYagAAAAELkbiKLXbJJa7SjU6I/QY9JERobBnytwWeEQ+71RYI1OnDAAMIUozDIMpO9yQ4MD1w==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "d4a26207-d30c-4e62-bf54-49dc559a77a6",
+                            SecurityStamp = "40f0bdfc-9916-4fa5-91e1-9f30a6bec4c8",
                             TwoFactorEnabled = false,
                             UserName = "user2@example.com"
                         });
@@ -328,7 +328,7 @@ namespace Capstone.Migrations
                         {
                             IdItinerario = 1,
                             Durata = 9,
-                            ImmagineUrl = "https://example.com/images/thailandia.jpg",
+                            ImmagineUrl = "https://hips.hearstapps.com/cosmopolitan-it/assets/17/42/1508506981-thailandia-bangkok-cosa-visitare.jpg",
                             NomeItinerario = "Tour in Thailandia",
                             PaeseId = 1
                         },
@@ -336,7 +336,7 @@ namespace Capstone.Migrations
                         {
                             IdItinerario = 2,
                             Durata = 12,
-                            ImmagineUrl = "https://example.com/images/cina.jpg",
+                            ImmagineUrl = "https://www.wwf.ch/sites/default/files/styles/page_cover_large_16_9/public/2017-02/Die-grosse-Mauer-in-China.jpg?h=6d1dd041&itok=4DpZ4xH4",
                             NomeItinerario = "Tour in Cina",
                             PaeseId = 2
                         },
@@ -344,7 +344,7 @@ namespace Capstone.Migrations
                         {
                             IdItinerario = 3,
                             Durata = 15,
-                            ImmagineUrl = "https://example.com/images/giappone.jpg",
+                            ImmagineUrl = "https://img.freepik.com/foto-gratuito/la-fioritura-dei-ciliegi-in-primavera-la-pagoda-chureito-e-il-monte-fuji-al-tramonto-in-giappone_335224-215.jpg",
                             NomeItinerario = "Tour in Giappone",
                             PaeseId = 3
                         });
