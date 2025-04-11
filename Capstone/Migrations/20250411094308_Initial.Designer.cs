@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Capstone.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250409134610_Initial")]
+    [Migration("20250411094308_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -54,15 +54,15 @@ namespace Capstone.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "5b42e37b-c034-46f8-a335-a431c05ba0e5",
-                            ConcurrencyStamp = "5b42e37b-c034-46f8-a335-a431c05ba0e5",
+                            Id = "4b93ad2b-3e8a-4617-82e5-65d3300b94b7",
+                            ConcurrencyStamp = "4b93ad2b-3e8a-4617-82e5-65d3300b94b7",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "5bd0d4b1-2751-4fbe-812e-20a860522ae2",
-                            ConcurrencyStamp = "5bd0d4b1-2751-4fbe-812e-20a860522ae2",
+                            Id = "ccd897ef-cb5d-4bea-9af9-3c47c86d3355",
+                            ConcurrencyStamp = "ccd897ef-cb5d-4bea-9af9-3c47c86d3355",
                             Name = "User",
                             NormalizedName = "USER"
                         });
@@ -89,6 +89,9 @@ namespace Capstone.Migrations
 
                     b.Property<string>("FirstName")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ImgUserPath")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("LastName")
@@ -139,6 +142,44 @@ namespace Capstone.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "1",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "08399e0f-9230-4cfe-a22d-2cdd7f3b3fd6",
+                            Email = "user1@example.com",
+                            EmailConfirmed = false,
+                            FirstName = "Mario",
+                            LastName = "Rossi",
+                            LockoutEnabled = false,
+                            NormalizedEmail = "USER1@EXAMPLE.COM",
+                            NormalizedUserName = "USER1@EXAMPLE.COM",
+                            PasswordHash = "AQAAAAIAAYagAAAAED0v+UUOGkjKoHGnwjmc7t6eTQc8TYZkwnTu8weseDCvKAoPfj9ZE3ZolUADjFknkg==",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "c1c9e03c-a638-4ea6-a8cd-27c7c1b45811",
+                            TwoFactorEnabled = false,
+                            UserName = "user1@example.com"
+                        },
+                        new
+                        {
+                            Id = "2",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "54f2ed46-a8c6-4141-bd8b-54c84f43b408",
+                            Email = "user2@example.com",
+                            EmailConfirmed = false,
+                            FirstName = "Luca",
+                            LastName = "Bianchi",
+                            LockoutEnabled = false,
+                            NormalizedEmail = "USER2@EXAMPLE.COM",
+                            NormalizedUserName = "USER2@EXAMPLE.COM",
+                            PasswordHash = "AQAAAAIAAYagAAAAECzTsYymz+60UGHOSDq4CMxcv+fs12728XqcvDwp4oMzdNMcTdeXunZoWyKCH5a00A==",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "d4a26207-d30c-4e62-bf54-49dc559a77a6",
+                            TwoFactorEnabled = false,
+                            UserName = "user2@example.com"
+                        });
                 });
 
             modelBuilder.Entity("Capstone.Models.ApplicationUserRole", b =>
@@ -156,7 +197,7 @@ namespace Capstone.Migrations
                     b.ToTable("AspNetUserRoles", (string)null);
                 });
 
-            modelBuilder.Entity("Capstone.Models.Carrello.Carrello", b =>
+            modelBuilder.Entity("Capstone.Models.Carrello", b =>
                 {
                     b.Property<int>("IdCarrello")
                         .ValueGeneratedOnAdd()
@@ -166,21 +207,26 @@ namespace Capstone.Migrations
 
                     b.Property<string>("UserId")
                         .IsRequired()
-                        .HasMaxLength(450)
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("IdCarrello");
 
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
                     b.ToTable("Carrelli");
                 });
 
-            modelBuilder.Entity("Capstone.Models.Carrello.CarrelloItem", b =>
+            modelBuilder.Entity("Capstone.Models.CarrelloItem", b =>
                 {
                     b.Property<int>("IdCarrelloItem")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdCarrelloItem"));
+
+                    b.Property<int>("CarrelloIdCarrello1")
+                        .HasColumnType("int");
 
                     b.Property<int>("IdCarrello")
                         .HasColumnType("int");
@@ -814,13 +860,16 @@ namespace Capstone.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdRecensione"));
 
-                    b.Property<int>("IdItinerario")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Testo")
+                    b.Property<string>("Commento")
                         .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateOnly>("CreatedAt")
+                        .HasColumnType("date");
+
+                    b.Property<int>("IdItinerario")
+                        .HasColumnType("int");
 
                     b.Property<string>("UserId")
                         .IsRequired()
@@ -836,6 +885,26 @@ namespace Capstone.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Recensioni");
+
+                    b.HasData(
+                        new
+                        {
+                            IdRecensione = 1,
+                            Commento = "Un tour fantastico, lo consiglio a tutti!",
+                            CreatedAt = new DateOnly(2025, 4, 11),
+                            IdItinerario = 1,
+                            UserId = "1",
+                            Valutazione = 5
+                        },
+                        new
+                        {
+                            IdRecensione = 2,
+                            Commento = "Ottimo, ma il prezzo potrebbe essere più basso.",
+                            CreatedAt = new DateOnly(2025, 4, 11),
+                            IdItinerario = 2,
+                            UserId = "2",
+                            Valutazione = 4
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -948,9 +1017,20 @@ namespace Capstone.Migrations
                     b.Navigation("ApplicationUser");
                 });
 
-            modelBuilder.Entity("Capstone.Models.Carrello.CarrelloItem", b =>
+            modelBuilder.Entity("Capstone.Models.Carrello", b =>
                 {
-                    b.HasOne("Capstone.Models.Carrello.Carrello", "Carrello")
+                    b.HasOne("Capstone.Models.ApplicationUser", "User")
+                        .WithOne("Carrello")
+                        .HasForeignKey("Capstone.Models.Carrello", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Capstone.Models.CarrelloItem", b =>
+                {
+                    b.HasOne("Capstone.Models.Carrello", "Carrello")
                         .WithMany("CarrelloItems")
                         .HasForeignKey("IdCarrello")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1043,13 +1123,15 @@ namespace Capstone.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Capstone.Models.ApplicationUser", null)
-                        .WithMany()
+                    b.HasOne("Capstone.Models.ApplicationUser", "User")
+                        .WithMany("Recensioni")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Itinerario");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -1095,10 +1177,15 @@ namespace Capstone.Migrations
 
             modelBuilder.Entity("Capstone.Models.ApplicationUser", b =>
                 {
+                    b.Navigation("Carrello")
+                        .IsRequired();
+
+                    b.Navigation("Recensioni");
+
                     b.Navigation("UserRoles");
                 });
 
-            modelBuilder.Entity("Capstone.Models.Carrello.Carrello", b =>
+            modelBuilder.Entity("Capstone.Models.Carrello", b =>
                 {
                     b.Navigation("CarrelloItems");
                 });

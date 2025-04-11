@@ -1,10 +1,23 @@
-﻿namespace Capstone.DTOs.Recensione
+﻿using System.ComponentModel.DataAnnotations;
+using Capstone.Models;
+
+namespace Capstone.DTOs.Recensione
 {
     public class RecensioneCreateRequestDto
     {
-        public string UserId { get; set; }
-        public string Testo { get; set; }
+        [Required]
+        public string Commento { get; set; }
+
+        [Range(1, 5)]
         public int Valutazione { get; set; }
+
+        [Required]
+        public string UserId { get; set; }
+
+        [Required]
         public int IdItinerario { get; set; }
+
+        // opzionale
+        public IFormFile? ImgUser { get; set; }
     }
 }

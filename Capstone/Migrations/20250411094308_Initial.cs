@@ -34,6 +34,7 @@ namespace Capstone.Migrations
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ImgUserPath = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -52,19 +53,6 @@ namespace Capstone.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Carrelli",
-                columns: table => new
-                {
-                    IdCarrello = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Carrelli", x => x.IdCarrello);
                 });
 
             migrationBuilder.CreateTable(
@@ -200,6 +188,25 @@ namespace Capstone.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Carrelli",
+                columns: table => new
+                {
+                    IdCarrello = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Carrelli", x => x.IdCarrello);
+                    table.ForeignKey(
+                        name: "FK_Carrelli_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Itinerari",
                 columns: table => new
                 {
@@ -298,8 +305,9 @@ namespace Capstone.Migrations
                 {
                     IdRecensione = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    CreatedAt = table.Column<DateOnly>(type: "date", nullable: false),
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Testo = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
+                    Commento = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
                     Valutazione = table.Column<int>(type: "int", nullable: false),
                     IdItinerario = table.Column<int>(type: "int", nullable: false)
                 },
@@ -311,7 +319,7 @@ namespace Capstone.Migrations
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Recensioni_Itinerari_IdItinerario",
                         column: x => x.IdItinerario,
@@ -331,7 +339,8 @@ namespace Capstone.Migrations
                     IdPartenza = table.Column<int>(type: "int", nullable: false),
                     Prezzo = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
                     Quantita = table.Column<int>(type: "int", nullable: false),
-                    IdCarrello = table.Column<int>(type: "int", nullable: false)
+                    IdCarrello = table.Column<int>(type: "int", nullable: false),
+                    CarrelloIdCarrello1 = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -364,8 +373,17 @@ namespace Capstone.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "5b42e37b-c034-46f8-a335-a431c05ba0e5", "5b42e37b-c034-46f8-a335-a431c05ba0e5", "Admin", "ADMIN" },
-                    { "5bd0d4b1-2751-4fbe-812e-20a860522ae2", "5bd0d4b1-2751-4fbe-812e-20a860522ae2", "User", "USER" }
+                    { "4b93ad2b-3e8a-4617-82e5-65d3300b94b7", "4b93ad2b-3e8a-4617-82e5-65d3300b94b7", "Admin", "ADMIN" },
+                    { "ccd897ef-cb5d-4bea-9af9-3c47c86d3355", "ccd897ef-cb5d-4bea-9af9-3c47c86d3355", "User", "USER" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "AspNetUsers",
+                columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "FirstName", "ImgUserPath", "LastName", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
+                values: new object[,]
+                {
+                    { "1", 0, "08399e0f-9230-4cfe-a22d-2cdd7f3b3fd6", "user1@example.com", false, "Mario", null, "Rossi", false, null, "USER1@EXAMPLE.COM", "USER1@EXAMPLE.COM", "AQAAAAIAAYagAAAAED0v+UUOGkjKoHGnwjmc7t6eTQc8TYZkwnTu8weseDCvKAoPfj9ZE3ZolUADjFknkg==", null, false, "c1c9e03c-a638-4ea6-a8cd-27c7c1b45811", false, "user1@example.com" },
+                    { "2", 0, "54f2ed46-a8c6-4141-bd8b-54c84f43b408", "user2@example.com", false, "Luca", null, "Bianchi", false, null, "USER2@EXAMPLE.COM", "USER2@EXAMPLE.COM", "AQAAAAIAAYagAAAAECzTsYymz+60UGHOSDq4CMxcv+fs12728XqcvDwp4oMzdNMcTdeXunZoWyKCH5a00A==", null, false, "d4a26207-d30c-4e62-bf54-49dc559a77a6", false, "user2@example.com" }
                 });
 
             migrationBuilder.InsertData(
@@ -467,6 +485,15 @@ namespace Capstone.Migrations
                     { 3, new DateOnly(2025, 8, 5), 2, 5, "Sold Out" }
                 });
 
+            migrationBuilder.InsertData(
+                table: "Recensioni",
+                columns: new[] { "IdRecensione", "Commento", "CreatedAt", "IdItinerario", "UserId", "Valutazione" },
+                values: new object[,]
+                {
+                    { 1, "Un tour fantastico, lo consiglio a tutti!", new DateOnly(2025, 4, 11), 1, "1", 5 },
+                    { 2, "Ottimo, ma il prezzo potrebbe essere più basso.", new DateOnly(2025, 4, 11), 2, "2", 4 }
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -505,6 +532,12 @@ namespace Capstone.Migrations
                 column: "NormalizedUserName",
                 unique: true,
                 filter: "[NormalizedUserName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Carrelli_UserId",
+                table: "Carrelli",
+                column: "UserId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_CarrelloItems_IdCarrello",

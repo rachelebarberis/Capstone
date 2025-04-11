@@ -1,125 +1,69 @@
-﻿using Capstone.DTOs.Recensione;
-using Capstone.Services;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
+using Capstone.DTOs.Recensione;
+using Capstone.Models;
 
-namespace Capstone.Controllers
+
+[ApiController]
+[Route("api/[controller]")]
+public class RecensioniController : ControllerBase
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class RecensioneController : ControllerBase
+    private readonly RecensioneService _service;
+
+    public RecensioniController(RecensioneService service)
     {
-        private readonly RecensioneService _recensioneService;
-        private readonly ILogger<RecensioneController> _logger;
+        _service = service;
+    }
 
-        public RecensioneController(RecensioneService recensioneService, ILogger<RecensioneController> logger)
-        {
-            _recensioneService = recensioneService;
-            _logger = logger;
-        }
+    [HttpGet]
+    public async Task<IActionResult> GetAll()
+    {
+        var recensioni = await _service.GetAllAsync();
+        return Ok(recensioni);
+    }
+
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetById(int id)
+    {
+        var recensione = await _service.GetByIdAsync(id);
+        if (recensione == null)
+            return NotFound();
+
+        return Ok(recensione);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Create([FromForm] RecensioneCreateRequestDto dto)
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var recensione = await _service.CreateAsync(dto, userId);
+        return CreatedAtAction(nameof(GetById), new { id = recensione.IdRecensione }, recensione);
+    }
+
+    [HttpPut]
+    public async Task<IActionResult> Update([FromForm] RecensioneUpdateRequestDto dto)
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var result = await _service.UpdateAsync(dto, userId);
+
+        if (!result)
+            return Forbid();
 
 
-        [HttpGet]
-        public async Task<ActionResult<List<RecensioneGetRequestDto>>> GetRecensioniAll()
-        {
-            try
-            {
-                var recensioni = await _recensioneService.GetRecensioniAll();
-                return Ok(recensioni);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Errore durante il recupero delle recensioni");
-                return StatusCode(500, "Errore interno del server");
-            }
-        }
+        return Ok(result); ;
+    }
 
-        // GET: api/recensioni/{idItinerario}
-        [HttpGet("itinerario/{idItinerario}")]
-        public async Task<ActionResult<List<RecensioneGetRequestDto>>> GetRecensioniByItinerario(int idItinerario)
-        {
-            try
-            {
-                var recensioni = await _recensioneService.GetRecensioniByItinerarioAsync(idItinerario);
-                return Ok(recensioni);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Errore durante il recupero delle recensioni");
-                return StatusCode(500, "Errore interno del server");
-            }
-        }
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var result = await _service.DeleteAsync(id, userId);
 
-        // GET: api/recensioni/{id}
-        [HttpGet("{id}")]
-        public async Task<ActionResult<RecensioneGetRequestDto>> GetRecensioneById(int id)
-        {
-            try
-            {
-                var recensione = await _recensioneService.GetRecensioneByIdAsync(id);
-                if (recensione == null)
-                {
-                    return NotFound();
-                }
-                return Ok(recensione);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"Errore durante il recupero della recensione con ID {id}");
-                return StatusCode(500, "Errore interno del server");
-            }
-        }
+        if (!result)
+            return Forbid();
 
-        // POST: api/recensioni
-        [HttpPost]
-        public async Task<ActionResult<RecensioneCreateRequestDto>> CreateRecensione([FromBody] RecensioneCreateRequestDto recensioneCreateRequestDto)
-        {
-            try
-            {
-                var recensione = await _recensioneService.CreateRecensioneAsync(recensioneCreateRequestDto);
-                return Ok(recensione);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Errore durante la creazione della recensione");
-                return StatusCode(500, "Errore interno del server");
-            }
-        }
 
-        // PUT: api/recensioni/{id}
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateRecensione(int id, [FromBody] RecensioneUpdateRequestDto recensioneUpdateRequestDto)
-        {
-            try
-            {
-                var recensione = await _recensioneService.UpdateRecensioneAsync(id, recensioneUpdateRequestDto);
-                if (recensione == null)
-                {
-                    return NotFound();
-                }
-                return Ok(recensione);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"Errore durante l'aggiornamento della recensione con ID {id}");
-                return StatusCode(500, "Errore interno del server");
-            }
-        }
-
-        // DELETE: api/recensioni/{id}
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteRecensione(int id)
-        {
-            try
-            {
-                await _recensioneService.DeleteRecensioneAsync(id);
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"Errore durante l'eliminazione della recensione con ID {id}");
-                return StatusCode(500, "Errore interno del server");
-            }
-        }
+        return Ok(result);
     }
 }

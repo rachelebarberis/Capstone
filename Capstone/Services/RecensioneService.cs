@@ -1,126 +1,143 @@
-﻿using Capstone.Data;
-using Capstone.DTOs.Recensione;
+﻿using Microsoft.EntityFrameworkCore;
 using Capstone.Models;
-using Microsoft.EntityFrameworkCore;
+using Capstone.Data;
+using Microsoft.AspNetCore.Identity;
+using Capstone.DTOs.Recensione;
 
-namespace Capstone.Services
+public class RecensioneService
 {
-    public class RecensioneService
+    private readonly ApplicationDbContext _context;
+    private readonly IWebHostEnvironment _env;
+    private readonly UserManager<ApplicationUser> _userManager;
+
+    public RecensioneService(ApplicationDbContext context, IWebHostEnvironment env, UserManager<ApplicationUser> userManager)
     {
-        private readonly ApplicationDbContext _context;
+        _context = context;
+        _env = env;
+        _userManager = userManager;
+    }
 
-        public RecensioneService(ApplicationDbContext context)
-        {
-            _context = context;
-        }
-
-        public async Task<List<RecensioneGetRequestDto>> GetRecensioniAll()
-        {
-            var recensioni = await _context.Recensioni
-                .Include(r => r.Itinerario)
-                .ToListAsync();
-
-            return recensioni.Select(r => new RecensioneGetRequestDto
+    public async Task<List<RecensioneGetRequestDto>> GetAllAsync()
+    {
+        return await _context.Recensioni
+            .Include(r => r.User)
+            .Include(r => r.Itinerario)
+            .Select(r => new RecensioneGetRequestDto
             {
                 IdRecensione = r.IdRecensione,
-                UserId = r.UserId,
-                Testo = r.Testo,
+                CreatedAt = r.CreatedAt,
+                Commento = r.Commento,
                 Valutazione = r.Valutazione,
+                UserId = r.UserId,
+                NomeUtente = r.User.FirstName + " " + r.User.LastName,
+                ImgUserPath = r.User.ImgUserPath,
                 IdItinerario = r.IdItinerario,
-                User = r.User,  
-            }).ToList();
-        }
+                TitoloItinerario = r.Itinerario.NomeItinerario
+            }).ToListAsync();
+    }
 
-        // GET: Recensioni per itinerario
-        public async Task<List<RecensioneGetRequestDto>> GetRecensioniByItinerarioAsync(int idItinerario)
-        {
-            var recensioni = await _context.Recensioni
-                .Where(r => r.IdItinerario == idItinerario)
-                .Include(r => r.Itinerario)
-                .ToListAsync();
-
-            return recensioni.Select(r => new RecensioneGetRequestDto
+    public async Task<RecensioneGetRequestDto?> GetByIdAsync(int idRecensione)
+    {
+        return await _context.Recensioni
+            .Include(r => r.User)           
+            .Include(r => r.Itinerario)    
+            .Where(r => r.IdRecensione == idRecensione)  
+            .Select(r => new RecensioneGetRequestDto
             {
                 IdRecensione = r.IdRecensione,
-                UserId = r.UserId,
-                Testo = r.Testo,
+                CreatedAt = r.CreatedAt,
+                Commento = r.Commento,
                 Valutazione = r.Valutazione,
+                UserId = r.UserId,
+                NomeUtente = r.User.FirstName + " " + r.User.LastName, 
+                ImgUserPath = r.User.ImgUserPath,  
                 IdItinerario = r.IdItinerario,
-                User = r.User
-            }).ToList();
-        }
+                TitoloItinerario = r.Itinerario.NomeItinerario
+            }).FirstOrDefaultAsync();  
+    }
 
-        // GET: Recensione per Id
-        public async Task<RecensioneGetRequestDto> GetRecensioneByIdAsync(int id)
+    public async Task<Recensione> CreateAsync(RecensioneCreateRequestDto dto, string userId)
+    {
+        var user = await _userManager.FindByIdAsync(userId);
+
+        // salva immagine se fornita
+        if (dto.ImgUser != null && dto.ImgUser.Length > 0)
         {
-            var recensione = await _context.Recensioni
-                .Include(r => r.Itinerario)
-                .FirstOrDefaultAsync(r => r.IdRecensione == id);
+            var fileExt = Path.GetExtension(dto.ImgUser.FileName);
+            var fileName = $"{userId}_{Guid.NewGuid()}{fileExt}";
+            var savePath = Path.Combine(_env.WebRootPath, "images", "users", fileName);
 
-            if (recensione == null)
+            Directory.CreateDirectory(Path.GetDirectoryName(savePath)!);
+
+            using (var stream = new FileStream(savePath, FileMode.Create))
             {
-                return null;
+                await dto.ImgUser.CopyToAsync(stream);
             }
 
-            return new RecensioneGetRequestDto
-            {
-                IdRecensione = recensione.IdRecensione,
-                UserId = recensione.UserId,
-                Testo = recensione.Testo,
-                Valutazione = recensione.Valutazione,
-                IdItinerario = recensione.IdItinerario,
-                User = recensione.User,
-            };
+            user.ImgUserPath = $"images/users/{fileName}";
+            await _userManager.UpdateAsync(user);
         }
 
-        // POST: Crea una recensione
-        public async Task<RecensioneCreateRequestDto> CreateRecensioneAsync(RecensioneCreateRequestDto dto)
+        var recensione = new Recensione
         {
-            var recensione = new Recensione
-            {
-                UserId = dto.UserId,
-                Testo = dto.Testo,
-                Valutazione = dto.Valutazione,
-                IdItinerario = dto.IdItinerario
-            };
+            Commento = dto.Commento,
+            Valutazione = dto.Valutazione,
+            UserId = dto.UserId,
+            IdItinerario = dto.IdItinerario,
+            CreatedAt = DateOnly.FromDateTime(DateTime.Today)
+        };
 
-            _context.Recensioni.Add(recensione);
-            await _context.SaveChangesAsync();
+        _context.Recensioni.Add(recensione);
+        await _context.SaveChangesAsync();
 
-            return dto;
-        }
+        return recensione;
+    }
 
-        // PUT: Aggiorna una recensione
-        public async Task<RecensioneUpdateRequestDto> UpdateRecensioneAsync(int id, RecensioneUpdateRequestDto dto)
+    public async Task<bool> UpdateAsync(RecensioneUpdateRequestDto dto, string userId)
+    {
+        var recensione = await _context.Recensioni.FindAsync(dto.IdRecensione);
+
+        if (recensione == null )
+            return false;
+
+        recensione.Commento = dto.Commento;
+        recensione.Valutazione = dto.Valutazione;
+
+        var user = await _userManager.FindByIdAsync(userId);
+
+        if (dto.ImgUser != null && dto.ImgUser.Length > 0)
         {
-            var recensione = await _context.Recensioni
-                .FirstOrDefaultAsync(r => r.IdRecensione == id);
+            var fileExt = Path.GetExtension(dto.ImgUser.FileName);
+            var fileName = $"{userId}_{Guid.NewGuid()}{fileExt}";
+            var savePath = Path.Combine(_env.WebRootPath, "images", "users", fileName);
 
-            if (recensione == null)
+            Directory.CreateDirectory(Path.GetDirectoryName(savePath)!);
+
+            using (var stream = new FileStream(savePath, FileMode.Create))
             {
-                return null;
+                await dto.ImgUser.CopyToAsync(stream);
             }
 
-            recensione.Testo = dto.Testo;
-            recensione.Valutazione = dto.Valutazione;
-
-            await _context.SaveChangesAsync();
-
-            return dto;
+            user.ImgUserPath = $"images/users/{fileName}";
+            await _userManager.UpdateAsync(user);
         }
 
-        // DELETE: Elimina una recensione
-        public async Task DeleteRecensioneAsync(int id)
-        {
-            var recensione = await _context.Recensioni
-                .FirstOrDefaultAsync(r => r.IdRecensione == id);
+        _context.Recensioni.Update(recensione);
+        await _context.SaveChangesAsync();
 
-            if (recensione != null)
-            {
-                _context.Recensioni.Remove(recensione);
-                await _context.SaveChangesAsync();
-            }
-        }
+        return true;
+    }
+
+    public async Task<bool> DeleteAsync(int id, string userId)
+    {
+        var recensione = await _context.Recensioni.FindAsync(id);
+
+        if (recensione == null)
+            return false;
+
+        _context.Recensioni.Remove(recensione);
+        await _context.SaveChangesAsync();
+
+        return true;
     }
 }
-

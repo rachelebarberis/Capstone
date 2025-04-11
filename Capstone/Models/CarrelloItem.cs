@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Capstone.Models.Carrello
+namespace Capstone.Models
 {
     public class CarrelloItem
     {

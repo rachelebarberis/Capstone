@@ -1,5 +1,4 @@
 ﻿using Capstone.Models;
-using Capstone.Models.Carrello;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -98,13 +97,17 @@ namespace Capstone.Data
                 .Property(p => p.Prezzo)
                 .HasColumnType("decimal(10,2)");
 
-            // Carrello
-            modelBuilder.Entity<Carrello>()
-                .HasKey(c => c.IdCarrello);
+            modelBuilder.Entity<ApplicationUser>()
+        .HasOne(a => a.Carrello)
+        .WithOne(c => c.User)
+        .HasForeignKey<Carrello>(c => c.UserId)
+        .OnDelete(DeleteBehavior.Cascade); 
 
             modelBuilder.Entity<Carrello>()
-                .Property(c => c.UserId)
-                .IsRequired();
+                .HasMany(c => c.CarrelloItems)
+                .WithOne()
+                .HasForeignKey("IdCarrello")
+                .OnDelete(DeleteBehavior.Cascade);
 
             // CarrelloItem
             modelBuilder.Entity<CarrelloItem>()
@@ -138,19 +141,19 @@ namespace Capstone.Data
                 .HasColumnType("decimal(10,2)");
 
             modelBuilder.Entity<Recensione>()
-       .HasOne(r => r.Itinerario)
-       .WithMany(i => i.Recensioni)  // Relazione 1 a molti: un itinerario può avere molte recensioni
-       .HasForeignKey(r => r.IdItinerario)
-       .OnDelete(DeleteBehavior.Cascade);  // Impostazione dell'eliminazione a cascata
+        .HasOne(r => r.User)  
+        .WithMany(u => u.Recensioni)  
+        .HasForeignKey(r => r.UserId) 
+        .OnDelete(DeleteBehavior.Cascade); 
 
-            // Configurazione della relazione tra Recensione e User
+   
             modelBuilder.Entity<Recensione>()
-                .HasOne<ApplicationUser>()  // ApplicationUser è la classe di utente di ASP.NET Identity
-                .WithMany()  // Un utente può avere molte recensioni
-                .HasForeignKey(r => r.UserId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .HasOne(r => r.Itinerario)  
+                .WithMany(i => i.Recensioni)  
+                .HasForeignKey(r => r.IdItinerario) 
+                .OnDelete(DeleteBehavior.Cascade);
 
-           
+          
 
             var adminId = Guid.NewGuid().ToString();
         var userId = Guid.NewGuid().ToString();
@@ -193,7 +196,7 @@ namespace Capstone.Data
          NomeItinerario = "Tour in Thailandia",
          Durata = 9,
          PaeseId = 1,
-         ImmagineUrl = "https://example.com/images/thailandia.jpg"  // Aggiungi l'URL dell'immagine
+         ImmagineUrl = "https://example.com/images/thailandia.jpg" 
      },
      new Itinerario
      {
@@ -201,7 +204,7 @@ namespace Capstone.Data
          NomeItinerario = "Tour in Cina",
          Durata = 12,
          PaeseId = 2,
-         ImmagineUrl = "https://example.com/images/cina.jpg"  // Aggiungi l'URL dell'immagine
+         ImmagineUrl = "https://example.com/images/cina.jpg"  
      },
      new Itinerario
      {
@@ -209,7 +212,7 @@ namespace Capstone.Data
          NomeItinerario = "Tour in Giappone",
          Durata = 15,
          PaeseId = 3,
-         ImmagineUrl = "https://example.com/images/giappone.jpg"  // Aggiungi l'URL dell'immagine
+         ImmagineUrl = "https://example.com/images/giappone.jpg"  
      }
  );
 
@@ -281,6 +284,54 @@ namespace Capstone.Data
     new Partenza { IdPartenza = 3, IdItinerario = 2, DataPartenza = new DateOnly(2025, 8, 5), PostiDisponibili = 5, Stato = "Sold Out" }
 );
 
+            modelBuilder.Entity<ApplicationUser>().HasData(
+       new ApplicationUser
+       {
+           Id = "1",
+           UserName = "user1@example.com",
+           Email = "user1@example.com",
+           FirstName = "Mario",
+           LastName = "Rossi",
+           NormalizedUserName = "USER1@EXAMPLE.COM",
+           NormalizedEmail = "USER1@EXAMPLE.COM",
+           PasswordHash = new PasswordHasher<ApplicationUser>().HashPassword(null, "Password123!")
+
+       },
+       new ApplicationUser
+       {
+           Id = "2",
+           UserName = "user2@example.com",
+           Email = "user2@example.com",
+           FirstName = "Luca",
+           LastName = "Bianchi",
+           NormalizedUserName = "USER2@EXAMPLE.COM",
+           NormalizedEmail = "USER2@EXAMPLE.COM",
+           PasswordHash = new PasswordHasher<ApplicationUser>().HashPassword(null, "Password123!")
+       }
+   );
+           
+
+
+            modelBuilder.Entity<Recensione>().HasData(
+       new Recensione
+       {
+           IdRecensione = 1,
+           Commento = "Un tour fantastico, lo consiglio a tutti!",
+           Valutazione = 5,
+           CreatedAt = DateOnly.FromDateTime(DateTime.Now),
+           UserId = "1",  
+           IdItinerario = 1 
+       },
+       new Recensione
+       {
+           IdRecensione = 2,
+           Commento = "Ottimo, ma il prezzo potrebbe essere più basso.",
+           Valutazione = 4,
+           CreatedAt = DateOnly.FromDateTime(DateTime.Now),
+           UserId = "2",  
+           IdItinerario = 2  
+       }
+   );
         }
     }
 }

@@ -50,7 +50,7 @@ namespace Capstone.Controllers
 
             var user = await _userManager.FindByEmailAsync(newUser.Email);
 
-            await _userManager.AddToRoleAsync(user, "Admin");
+            await _userManager.AddToRoleAsync(user, "User");
 
             return Ok();
         }
