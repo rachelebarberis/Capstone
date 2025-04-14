@@ -63,7 +63,7 @@ namespace Capstone.Data
 
             modelBuilder.Entity<ItinerarioGiorno>()
                 .HasOne(g => g.Itinerario)
-                .WithMany(i => i.ItinerarioGiorni)
+                .WithMany(i => i.Giorni)
                 .HasForeignKey(g => g.IdItinerario);
 
             modelBuilder.Entity<ItinerarioGiorno>()

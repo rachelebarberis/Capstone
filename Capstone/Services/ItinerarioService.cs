@@ -21,7 +21,7 @@ namespace Capstone.Services
                .Include(i => i.Paese)
                 .Include(i => i.ItinerarioFascePrezzo)
                     .ThenInclude(fp => fp.FasciaDiPrezzo)
-                .Include(i => i.ItinerarioGiorni)
+                .Include(i => i.Giorni)
                 .Include(i => i.Partenze)
                 .ToListAsync();
 
@@ -29,6 +29,7 @@ namespace Capstone.Services
             {
                 IdItinerario = itinerario.IdItinerario,
                 NomeItinerario = itinerario.NomeItinerario,
+            
                 ImmagineUrl = itinerario.ImmagineUrl,
                 Paese = new PaeseRequestDto
                 {
@@ -36,7 +37,7 @@ namespace Capstone.Services
                     Nome = itinerario.Paese.Nome
                 },
                 Durata = itinerario.Durata,
-                Giorni = itinerario.ItinerarioGiorni.Select(g => new ItinerarioGiornoRequestDto
+                Giorni = itinerario.Giorni.Select(g => new ItinerarioGiornoRequestDto
                 {
                     IdItinerarioGiorno = g.IdItinerarioGiorno,
                     Giorno = g.Giorno,
@@ -64,7 +65,7 @@ namespace Capstone.Services
                 .Include(i => i.Paese)
                 .Include(i => i.ItinerarioFascePrezzo)
                 .ThenInclude(fp => fp.FasciaDiPrezzo)
-                .Include(i => i.ItinerarioGiorni)
+                .Include(i => i.Giorni)
                 .Include(i => i.Partenze)
                 .FirstOrDefaultAsync(i => i.IdItinerario == id);
 
@@ -84,9 +85,9 @@ namespace Capstone.Services
                     Nome = itinerario.Paese.Nome
                 },
                 Durata = itinerario.Durata,
-                Giorni = itinerario.ItinerarioGiorni.Select(g => new ItinerarioGiornoRequestDto
+                Giorni = itinerario.Giorni.Select(g => new ItinerarioGiornoRequestDto
                 {
-
+                    IdItinerarioGiorno =g.IdItinerarioGiorno,
                     Giorno = g.Giorno,
                     Titolo = g.Titolo,
                     Descrizione = g.Descrizione
@@ -122,7 +123,7 @@ namespace Capstone.Services
                 Durata = itinerarioCreateRequestDto.Durata,
                 ImmagineUrl = itinerarioCreateRequestDto.ImmagineUrl,
                 Paese = paese,
-                ItinerarioGiorni = itinerarioCreateRequestDto.ItinerarioGiorni.Select(g => new ItinerarioGiorno
+                Giorni = itinerarioCreateRequestDto.ItinerarioGiorni.Select(g => new ItinerarioGiorno
                 {
                     Giorno = g.Giorno,
                     Titolo = g.Titolo,
@@ -156,7 +157,7 @@ namespace Capstone.Services
                     IdPaese = itinerario.Paese.IdPaese,
                     Nome = itinerario.Paese.Nome
                 },
-                ItinerarioGiorni = itinerario.ItinerarioGiorni.Select(g => new ItinerarioGiornoCreateRequestDto
+                ItinerarioGiorni = itinerario.Giorni.Select(g => new ItinerarioGiornoCreateRequestDto
                 {
                     Giorno = g.Giorno,
                     Titolo = g.Titolo,
@@ -181,10 +182,11 @@ namespace Capstone.Services
 
 
         public async Task<ItinerarioUpdateRequestDto> UpdateItinerarioAsync(int id, ItinerarioUpdateRequestDto itinerarioUpdateRequestDto)
-
         {
             var itinerario = await _context.Itinerari
                 .Include(i => i.ItinerarioFascePrezzo)
+                .Include(i => i.Giorni)
+                .Include(i => i.Partenze)
                 .FirstOrDefaultAsync(i => i.IdItinerario == id);
 
             if (itinerario == null)
@@ -196,7 +198,7 @@ namespace Capstone.Services
             itinerario.Durata = itinerarioUpdateRequestDto.Durata;
             itinerario.ImmagineUrl = itinerarioUpdateRequestDto.ImmagineUrl;
 
-            // Aggiornamento delle fasce di prezzo
+            // 🔁 Aggiorna le fasce di prezzo
             foreach (var fasciaDto in itinerarioUpdateRequestDto.ItinerarioFascePrezzo)
             {
                 var fasciaPrezzo = itinerario.ItinerarioFascePrezzo
@@ -207,17 +209,42 @@ namespace Capstone.Services
                 }
             }
 
+            // 🔁 Sovrascrive i giorni (puoi anche usare logica di update se preferisci)
+            itinerario.Giorni.Clear();
+            foreach (var giorno in itinerarioUpdateRequestDto.Giorni)
+            {
+                itinerario.Giorni.Add(new ItinerarioGiorno
+                {
+                    Giorno = giorno.Giorno,
+                    Titolo = giorno.Titolo,
+                    Descrizione = giorno.Descrizione,
+                    IdItinerario = itinerario.IdItinerario
+                });
+            }
+
+            // 🔁 Sovrascrive le partenze (facoltativo — dipende dal tuo uso)
+            itinerario.Partenze.Clear();
+            foreach (var partenzaDto in itinerarioUpdateRequestDto.Partenze)
+            {
+                itinerario.Partenze.Add(new Partenza
+                {
+                    DataPartenza = partenzaDto.DataPartenza,
+                    Stato = partenzaDto.Stato,
+                    IdItinerario = itinerario.IdItinerario
+                });
+            }
+
             await _context.SaveChangesAsync();
 
             return new ItinerarioUpdateRequestDto
             {
-
+              
                 NomeItinerario = itinerario.NomeItinerario,
                 ImmagineUrl = itinerario.ImmagineUrl,
                 Durata = itinerario.Durata,
-                Giorni = itinerario.ItinerarioGiorni.Select(g => new ItinerarioGiornoUpdateRequestDto
+                Giorni = itinerario.Giorni.Select(g => new ItinerarioGiornoUpdateRequestDto
                 {
-
+                    IdItinerarioGiorno = g.IdItinerarioGiorno,
                     Giorno = g.Giorno,
                     Titolo = g.Titolo,
                     Descrizione = g.Descrizione
@@ -225,18 +252,18 @@ namespace Capstone.Services
                 Partenze = itinerario.Partenze.Select(p => new PartenzaUpdateRequestDto
                 {
                     IdPartenza = p.IdPartenza,
-
                     DataPartenza = p.DataPartenza,
                     Stato = p.Stato,
                 }).ToList(),
                 ItinerarioFascePrezzo = itinerario.ItinerarioFascePrezzo.Select(fp => new ItinerarioFasciaPrezzoUpdateRequestDto
                 {
-
-
+                    IdItinerarioFasciaPrezzo = fp.IdItinerarioFasciaPrezzo,
+                    IdFasciaDiPrezzo= fp.IdFasciaDiPrezzo,
                     Prezzo = fp.Prezzo
                 }).ToList()
             };
         }
+
 
 
 
@@ -262,7 +289,7 @@ namespace Capstone.Services
                 .Include(i => i.Paese)
                 .Include(i => i.ItinerarioFascePrezzo)
                     .ThenInclude(fp => fp.FasciaDiPrezzo)
-                .Include(i => i.ItinerarioGiorni)
+                .Include(i => i.Giorni)
                 .Include(i => i.Partenze)
                 .ToListAsync();
 
@@ -282,7 +309,7 @@ namespace Capstone.Services
                     Nome = itinerario.Paese.Nome
                 },
                 Durata = itinerario.Durata,
-                Giorni = itinerario.ItinerarioGiorni.Select(g => new ItinerarioGiornoRequestDto
+                Giorni = itinerario.Giorni.Select(g => new ItinerarioGiornoRequestDto
                 {
                     IdItinerarioGiorno = g.IdItinerarioGiorno,
                     Giorno = g.Giorno,

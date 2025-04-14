@@ -16,7 +16,9 @@ namespace Capstone.DTOs.Itinerario
         public string ImmagineUrl { get; set; }
         public List<ItinerarioGiornoCreateRequestDto> ItinerarioGiorni { get; set; }
 
-     
+
+
+
         public List<PartenzaCreateRequestDto> Partenze { get; set; }
 
         public PaeseRequestDto Paese { get; set; }

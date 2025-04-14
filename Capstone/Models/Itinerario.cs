@@ -13,6 +13,10 @@ namespace Capstone.Models
         [StringLength(100, ErrorMessage = "Il nome dell'itinerario non può superare i 100 caratteri.")]
         public string NomeItinerario { get; set; }
 
+       
+
+
+
         [Required(ErrorMessage = "La durata è obbligatoria.")]
         [Range(1, 365, ErrorMessage = "La durata deve essere compresa tra 1 e 365 giorni.")]
         public int Durata { get; set; }
@@ -26,7 +30,7 @@ namespace Capstone.Models
 
         public Paese Paese { get; set; }
 
-        public List<ItinerarioGiorno> ItinerarioGiorni { get; set; } = new();
+        public List<ItinerarioGiorno> Giorni { get; set; } = new();
 
         public List<ItinerarioFasciaPrezzo> ItinerarioFascePrezzo { get; set; } = new();
 

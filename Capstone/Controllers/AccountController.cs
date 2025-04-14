@@ -4,6 +4,7 @@ using System.Text;
 using Capstone.DTOs.Account;
 using Capstone.Models;
 using Capstone.Settings;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -54,6 +55,7 @@ namespace Capstone.Controllers
 
             return Ok();
         }
+       
 
         [HttpPost("login")]
         public async Task<IActionResult> Login(LoginRequestDto loginRequestDto)

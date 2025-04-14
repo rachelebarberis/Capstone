@@ -4,8 +4,10 @@ namespace Capstone.DTOs.Itinerario
 {
     public class ItinerarioUpdateRequestDto
     {
-     
-            [Required]
+        [Required]
+        public int IdItinerario { get; set; }
+
+        [Required]
             public string NomeItinerario { get; set; }
         [Required]
         public string ImmagineUrl { get; set; }

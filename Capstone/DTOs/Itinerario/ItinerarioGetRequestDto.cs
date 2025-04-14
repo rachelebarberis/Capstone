@@ -9,6 +9,7 @@ namespace Capstone.DTOs.Itinerario
         public string NomeItinerario { get; set; }
         public int Durata { get; set; }
 
+       
         public string ImmagineUrl { get; set; }
         public PaeseRequestDto Paese { get; set; } 
         public List<ItinerarioGiornoRequestDto> Giorni { get; set; }
