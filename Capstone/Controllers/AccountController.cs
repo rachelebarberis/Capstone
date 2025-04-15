@@ -51,11 +51,37 @@ namespace Capstone.Controllers
 
             var user = await _userManager.FindByEmailAsync(newUser.Email);
 
-            await _userManager.AddToRoleAsync(user, "Admin");
+            await _userManager.AddToRoleAsync(user, "User");
 
             return Ok();
         }
-       
+        [HttpGet("userinfo")]
+        [Authorize(Roles = "User")]
+        public async Task<IActionResult> GetUserInfo()
+        {
+            var email = User.FindFirstValue(ClaimTypes.Email);
+            if (email == null)
+                return Unauthorized();
+
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user == null)
+                return Unauthorized();
+
+            var roles = await _userManager.GetRolesAsync(user);
+            if (!roles.Contains("User"))
+                return Forbid();
+
+            var userInfo = new
+            {
+                user.FirstName,
+                user.LastName,
+                user.Email,
+                user.ImgUserPath
+            };
+
+            return Ok(userInfo);
+        }
+
 
         [HttpPost("login")]
         public async Task<IActionResult> Login(LoginRequestDto loginRequestDto)

@@ -1,4 +1,4 @@
-using Capstone.Data;
+﻿using Capstone.Data;
 using Capstone.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -9,11 +9,12 @@ using Capstone.Settings;
 using Serilog;
 using System.Text;
 using Capstone.Services;
+using System.Security.Claims;
 
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Information()
     .MinimumLevel.Override("Microsoft", Serilog.Events.LogEventLevel.Warning)
-    .MinimumLevel.Override("Syster", Serilog.Events.LogEventLevel.Warning)
+    .MinimumLevel.Override("System", Serilog.Events.LogEventLevel.Warning)
     .Enrich.FromLogContext()
     .WriteTo.Async(a => a.File("Log/Log_txt", rollingInterval: RollingInterval.Day))
     .WriteTo.Async(a => a.Console())
@@ -78,31 +79,49 @@ try
         .AddEntityFrameworkStores<ApplicationDbContext>()
         .AddDefaultTokenProviders();
 
+    // Configurazione per l'autenticazione JWT
     builder.Services.AddAuthentication(options =>
     {
         options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
         options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
     })
-       .AddJwtBearer(options =>
-       {
-           options.TokenValidationParameters = new TokenValidationParameters()
-           {
-               ValidateIssuer = true,
+    .AddJwtBearer(options =>
+    {
+        options.SaveToken = true; // Salva il token
 
-               ValidateAudience = true,
+        options.TokenValidationParameters = new TokenValidationParameters()
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
 
-               ValidateLifetime = true,
+            ValidIssuer = builder.Configuration.GetSection(nameof(Jwt)).GetValue<string>("Issuer"),
+            ValidAudience = builder.Configuration.GetSection(nameof(Jwt)).GetValue<string>("Audience"),
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration.GetSection(nameof(Jwt)).GetValue<string>("SecurityKey"))),
+            RoleClaimType = ClaimTypes.Role
+        };
 
-               ValidateIssuerSigningKey = true,
-
-               ValidIssuer = builder.Configuration.GetSection(nameof(Jwt)).GetValue<string>("Issuer"),
-
-               ValidAudience = builder.Configuration.GetSection(nameof(Jwt)).GetValue<string>("Audience"),
-
-               IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration.GetSection(nameof(Jwt)).GetValue<string>("SecurityKey")))
-           };
-       });
-
+        // Eventi per il debug
+        options.Events = new JwtBearerEvents
+        {
+            OnAuthenticationFailed = context =>
+            {
+                Console.WriteLine($"❌ AUTH FAILED: {context.Exception.Message}");
+                return Task.CompletedTask;
+            },
+            OnTokenValidated = context =>
+            {
+                Console.WriteLine("✅ TOKEN VALIDATO CORRETTAMENTE");
+                return Task.CompletedTask;
+            },
+            OnChallenge = context =>
+            {
+                Console.WriteLine($"⚠️ CHALLENGE TRIGGERED: {context.ErrorDescription}");
+                return Task.CompletedTask;
+            }
+        };
+    });
 
     builder.Services.AddScoped<UserManager<ApplicationUser>>();
     builder.Services.AddScoped<SignInManager<ApplicationUser>>();
@@ -112,11 +131,9 @@ try
     builder.Services.AddScoped<ItinerarioService>();
     builder.Services.AddScoped<RecensioneService>();
 
-
     builder.Services.AddDbContext<ApplicationDbContext>(options =>
         options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
     );
-
 
     builder.Host.UseSerilog();
 
@@ -126,9 +143,9 @@ try
         c.AllowAnyOrigin()
         .AllowAnyMethod()
         .AllowAnyHeader()
-        );
+    );
 
-    // Configure the HTTP request pipeline.
+    // Configura la pipeline HTTP
     if (app.Environment.IsDevelopment())
     {
         app.UseSwagger();
@@ -137,8 +154,8 @@ try
 
     app.UseHttpsRedirection();
 
-    app.UseAuthentication();
-    app.UseAuthorization();
+    app.UseAuthentication(); // Autenticazione PRIMA
+    app.UseAuthorization();  // Autorizzazione DOPO
 
     app.MapControllers();
 
