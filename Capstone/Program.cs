@@ -152,6 +152,7 @@ try
         app.UseSwaggerUI();
     }
 
+    app.UseStaticFiles();
     app.UseHttpsRedirection();
 
     app.UseAuthentication(); // Autenticazione PRIMA

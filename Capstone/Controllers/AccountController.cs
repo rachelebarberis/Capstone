@@ -82,6 +82,49 @@ namespace Capstone.Controllers
             return Ok(userInfo);
         }
 
+        [HttpPost("uploadprofileimage")]
+        [Authorize(Roles = "User")]
+        public async Task<IActionResult> UploadProfileImage([FromForm] UploadImageDto dto)
+        {
+            var imageFile = dto.ImageFile;
+
+            if (imageFile == null || imageFile.Length == 0)
+                return BadRequest("File non valido");
+
+            var email = User.FindFirstValue(ClaimTypes.Email);
+            var user = await _userManager.FindByEmailAsync(email);
+
+            if (user == null)
+                return Unauthorized();
+
+            var uploadDir = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "users");
+            if (!Directory.Exists(uploadDir))
+            {
+                Directory.CreateDirectory(uploadDir);
+            }
+
+            var uniqueFileName = $"{Guid.NewGuid()}_{Path.GetFileName(imageFile.FileName)}";
+            var filePath = Path.Combine(uploadDir, uniqueFileName);
+
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await imageFile.CopyToAsync(stream);
+            }
+
+            user.ImgUserPath = $"/images/users/{uniqueFileName}";
+            await _userManager.UpdateAsync(user);
+
+            return Ok(new
+            {
+                user.FirstName,
+                user.LastName,
+                user.Email,
+                user.ImgUserPath
+            });
+        }
+
+
+
 
         [HttpPost("login")]
         public async Task<IActionResult> Login(LoginRequestDto loginRequestDto)
@@ -113,6 +156,37 @@ namespace Capstone.Controllers
             {
                 Token = tokenString,
                 Expires = expiry
+            });
+        }
+    
+
+    [HttpPost("updateuserinfo")]
+        [Authorize(Roles = "User")]
+        public async Task<IActionResult> UpdateUserInfo([FromBody] UpdateUserInfoDto dto)
+        {
+            var email = User.FindFirstValue(ClaimTypes.Email);
+            var user = await _userManager.FindByEmailAsync(email);
+
+            if (user == null)
+                return Unauthorized();
+
+            user.FirstName = dto.FirstName ?? user.FirstName;
+            user.LastName = dto.LastName ?? user.LastName;
+            user.Email = dto.Email ?? user.Email;
+            user.UserName = dto.Email ?? user.Email;
+            user.ImgUserPath = dto.ImgUserPath ?? user.ImgUserPath;
+
+            var result = await _userManager.UpdateAsync(user);
+
+            if (!result.Succeeded)
+                return BadRequest("Errore durante l'aggiornamento del profilo.");
+
+            return Ok(new
+            {
+                user.FirstName,
+                user.LastName,
+                user.Email,
+                user.ImgUserPath
             });
         }
     }
