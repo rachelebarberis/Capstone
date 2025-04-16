@@ -130,6 +130,7 @@ try
     builder.Services.AddScoped<FasceDiPrezzoService>();
     builder.Services.AddScoped<ItinerarioService>();
     builder.Services.AddScoped<RecensioneService>();
+    builder.Services.AddScoped<CarrelloService>();
 
     builder.Services.AddDbContext<ApplicationDbContext>(options =>
         options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
