@@ -9,5 +9,10 @@
         public decimal Prezzo { get; set; }
         public int Quantita { get; set; }
         public decimal PrezzoTotale { get; set; }
+
+        public string NomeItinerario { get; set; }
+        public string ImmagineUrl { get; set; }
+
+        public DateOnly DataPartenza { get; set; }
     }
 }

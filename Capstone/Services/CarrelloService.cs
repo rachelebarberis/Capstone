@@ -1,7 +1,8 @@
-﻿using Capstone.Data;
+﻿using Capstone.Models;
 using Capstone.DTOs.Carrello;
-using Capstone.Models;
 using Microsoft.EntityFrameworkCore;
+using System;
+using Capstone.Data;
 
 namespace Capstone.Services
 {
@@ -13,139 +14,133 @@ namespace Capstone.Services
         {
             _context = context;
         }
-        
 
-        // Crea un nuovo carrello per un utente, aggiungendo gli articoli al carrello
-        public async Task<CarrelloDto> CreaCarrelloAsync(CarrelloCreateDto carrelloCreateDto)
+        // Modificato per usare l'email
+        public async Task<CarrelloDto> GetCarrelloByEmailAsync(string email)
         {
-            var carrello = new Carrello
-            {
-                UserId = carrelloCreateDto.UserId,
-                CarrelloItems = new List<CarrelloItem>()
-            };
+            // Trova l'utente tramite email
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+            if (user == null) return null;
 
-            _context.Carrelli.Add(carrello);
-            await _context.SaveChangesAsync();
+            var carrello = await _context.Carrelli
+                .Include(c => c.CarrelloItems)
+                    .ThenInclude(ci => ci.Itinerario) // Include dell'Itinerario
+                .Include(c => c.CarrelloItems)
+                    .ThenInclude(ci => ci.ItinerarioFasciaPrezzo) // Include della Fascia Prezzo
+                .Include(c => c.CarrelloItems)
+                    .ThenInclude(ci => ci.Partenza) // Include della Partenza
+                .FirstOrDefaultAsync(c => c.UserId == user.Id);
 
-            // Aggiungere gli articoli al carrello appena creato
-            foreach (var item in carrelloCreateDto.CarrelloItems)
-            {
-                var carrelloItem = new CarrelloItem
-                {
-                    IdItinerario = item.IdItinerario,
-                    IdItinerarioFasciaPrezzo = item.IdItinerarioFasciaPrezzo,
-                    IdPartenza = item.IdPartenza,
-                    Prezzo = item.Prezzo,
-                    Quantita = item.Quantita,
-                    IdCarrello = carrello.IdCarrello
-                };
+            if (carrello == null) return null;
 
-                carrello.CarrelloItems.Add(carrelloItem);
-            }
-
-            await _context.SaveChangesAsync();
-
+            // Mappatura con le informazioni extra
             return new CarrelloDto
             {
                 IdCarrello = carrello.IdCarrello,
                 UserId = carrello.UserId,
                 Totale = carrello.Totale,
-                CarrelloItems = carrello.CarrelloItems.Select(ci => new CarrelloItemDto
+                CarrelloItems = carrello.CarrelloItems.Select(item => new CarrelloItemDto
                 {
-                    IdCarrelloItem = ci.IdCarrelloItem,
-                    IdItinerario = ci.IdItinerario,
-                    IdItinerarioFasciaPrezzo = ci.IdItinerarioFasciaPrezzo,
-                    IdPartenza = ci.IdPartenza,
-                    Prezzo = ci.Prezzo,
-                    Quantita = ci.Quantita,
-                    PrezzoTotale = ci.PrezzoTotale
+                    IdCarrelloItem = item.IdCarrelloItem,
+                    IdItinerario = item.IdItinerario,
+                    IdItinerarioFasciaPrezzo = item.IdItinerarioFasciaPrezzo,
+                    IdPartenza = item.IdPartenza,
+                    Prezzo = item.Prezzo,
+                    Quantita = item.Quantita,
+                    PrezzoTotale = item.PrezzoTotale,
+
+                    NomeItinerario = item.Itinerario?.NomeItinerario,
+                    ImmagineUrl = item.Itinerario?.ImmagineUrl,
+                    DataPartenza = item.Partenza.DataPartenza
                 }).ToList()
             };
         }
 
-        // Aggiungi un nuovo articolo al carrello
-        public async Task<CarrelloItemDto> AggiungiAlCarrelloAsync(string userId, CarrelloItemCreateDto carrelloItemCreateDto)
+        // Modificato per usare l'email
+        public async Task<CarrelloDto> CreateCarrelloAsync(CarrelloCreateDto dto)
         {
+            // Trova l'utente tramite email
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == dto.UserEmail);
+            if (user == null)
+                return null;
+
             var carrello = await _context.Carrelli
-                .FirstOrDefaultAsync(c => c.UserId == userId);
+                .Include(c => c.CarrelloItems)
+                .FirstOrDefaultAsync(c => c.UserId == user.Id);
 
             if (carrello == null)
             {
-                return null;
+                carrello = new Carrello
+                {
+                    UserId = user.Id,
+                    CarrelloItems = new List<CarrelloItem>()
+                };
+                _context.Carrelli.Add(carrello);
             }
 
-            var carrelloItem = new CarrelloItem
+            foreach (var itemDto in dto.CarrelloItems)
             {
-                IdItinerario = carrelloItemCreateDto.IdItinerario,
-                IdItinerarioFasciaPrezzo = carrelloItemCreateDto.IdItinerarioFasciaPrezzo,
-                IdPartenza = carrelloItemCreateDto.IdPartenza,
-                Prezzo = carrelloItemCreateDto.Prezzo,
-                Quantita = carrelloItemCreateDto.Quantita,
-                IdCarrello = carrello.IdCarrello
-            };
+                carrello.CarrelloItems.Add(new CarrelloItem
+                {
+                    IdItinerario = itemDto.IdItinerario,
+                    IdItinerarioFasciaPrezzo = itemDto.IdItinerarioFasciaPrezzo,
+                    IdPartenza = itemDto.IdPartenza,
+                    Prezzo = itemDto.Prezzo,
+                    Quantita = itemDto.Quantita
+                });
+            }
 
-            carrello.CarrelloItems.Add(carrelloItem);
             await _context.SaveChangesAsync();
-
-            return new CarrelloItemDto
-            {
-                IdCarrelloItem = carrelloItem.IdCarrelloItem,
-                IdItinerario = carrelloItem.IdItinerario,
-                IdItinerarioFasciaPrezzo = carrelloItem.IdItinerarioFasciaPrezzo,
-                IdPartenza = carrelloItem.IdPartenza,
-                Prezzo = carrelloItem.Prezzo,
-                Quantita = carrelloItem.Quantita,
-                PrezzoTotale = carrelloItem.PrezzoTotale
-            };
+            return await GetCarrelloByEmailAsync(dto.UserEmail);
         }
 
-        // Aggiorna un articolo esistente nel carrello
-        public async Task<CarrelloItemDto> AggiornaCarrelloItemAsync(int idCarrelloItem, CarrelloItemUpdateDto carrelloItemUpdateDto)
+        // Modificato per usare l'email
+        public async Task<CarrelloDto> UpdateCarrelloItemAsync(int itemId, CarrelloItemUpdateDto dto)
         {
-            var carrelloItem = await _context.CarrelloItems
-                .FirstOrDefaultAsync(ci => ci.IdCarrelloItem == idCarrelloItem);
+            var item = await _context.CarrelloItems
+                .Include(i => i.Carrello)
+                .FirstOrDefaultAsync(i => i.IdCarrelloItem == itemId);
 
-            if (carrelloItem == null)
-            {
+            if (item == null)
                 return null;
-            }
 
-            carrelloItem.IdItinerario = carrelloItemUpdateDto.IdItinerario;
-            carrelloItem.IdItinerarioFasciaPrezzo = carrelloItemUpdateDto.IdItinerarioFasciaPrezzo;
-            carrelloItem.IdPartenza = carrelloItemUpdateDto.IdPartenza;
-            carrelloItem.Prezzo = carrelloItemUpdateDto.Prezzo;
-            carrelloItem.Quantita = carrelloItemUpdateDto.Quantita;
+            item.IdItinerario = dto.IdItinerario;
+            item.IdItinerarioFasciaPrezzo = dto.IdItinerarioFasciaPrezzo;
+            item.IdPartenza = dto.IdPartenza;
+            item.Prezzo = dto.Prezzo;
+            item.Quantita = dto.Quantita;
 
             await _context.SaveChangesAsync();
 
-            return new CarrelloItemDto
-            {
-                IdCarrelloItem = carrelloItem.IdCarrelloItem,
-                IdItinerario = carrelloItem.IdItinerario,
-                IdItinerarioFasciaPrezzo = carrelloItem.IdItinerarioFasciaPrezzo,
-                IdPartenza = carrelloItem.IdPartenza,
-                Prezzo = carrelloItem.Prezzo,
-                Quantita = carrelloItem.Quantita,
-                PrezzoTotale = carrelloItem.PrezzoTotale
-            };
+            return await GetCarrelloByEmailAsync(item.Carrello.User.Email);  // Ora si usa l'email
         }
 
-        // Rimuovi un articolo dal carrello
-        public async Task<bool> RimuoviDalCarrelloAsync(int idCarrelloItem)
+        // Modificato per usare l'email
+        public async Task<bool> RemoveItemAsync(int itemId)
         {
-            var carrelloItem = await _context.CarrelloItems
-                .FirstOrDefaultAsync(ci => ci.IdCarrelloItem == idCarrelloItem);
+            var item = await _context.CarrelloItems.FindAsync(itemId);
+            if (item == null) return false;
 
-            if (carrelloItem == null)
-            {
-                return false;
-            }
-
-            _context.CarrelloItems.Remove(carrelloItem);
+            _context.CarrelloItems.Remove(item);
             await _context.SaveChangesAsync();
+            return true;
+        }
 
+        // Modificato per usare l'email
+        public async Task<bool> ClearCarrelloAsync(string email)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+            if (user == null) return false;
+
+            var carrello = await _context.Carrelli
+                .Include(c => c.CarrelloItems)
+                .FirstOrDefaultAsync(c => c.UserId == user.Id);
+
+            if (carrello == null) return false;
+
+            _context.CarrelloItems.RemoveRange(carrello.CarrelloItems);
+            await _context.SaveChangesAsync();
             return true;
         }
     }
-
 }

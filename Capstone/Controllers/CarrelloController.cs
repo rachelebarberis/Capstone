@@ -1,144 +1,62 @@
-﻿using Capstone.DTOs.Carrello;
+﻿using Microsoft.AspNetCore.Mvc;
+using Capstone.DTOs.Carrello;
 using Capstone.Services;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Capstone.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
+    [Route("api/[controller]")]
+    [Authorize(Roles = "User")]
     public class CarrelloController : ControllerBase
     {
         private readonly CarrelloService _carrelloService;
-        private readonly ILogger<CarrelloController> _logger;
 
-        public CarrelloController(CarrelloService carrelloService, ILogger<CarrelloController> logger)
+        public CarrelloController(CarrelloService carrelloService)
         {
             _carrelloService = carrelloService;
-            _logger = logger;
         }
 
-        // Crea un carrello per un utente
-        [HttpPost("create")]
-        public async Task<ActionResult<CarrelloDto>> CreateCart([FromBody] CarrelloCreateDto carrelloCreateDto)
+        // Modificato per utilizzare l'email
+        [HttpGet("{email}")]
+        public async Task<IActionResult> GetCarrello(string email)
         {
-            try
-            {
-                if (carrelloCreateDto == null)
-                {
-                    _logger.LogWarning("Richiesta di creazione carrello fallita: i dati del carrello sono nulli.");
-                    return BadRequest("I dati del carrello non sono validi.");
-                }
-
-                _logger.LogInformation("Creazione di un nuovo carrello per l'utente {UserId}.", carrelloCreateDto.UserId);
-
-                var result = await _carrelloService.CreaCarrelloAsync(carrelloCreateDto);
-
-                if (result == null)
-                {
-                    _logger.LogError("Errore nella creazione del carrello per l'utente {UserId}.", carrelloCreateDto.UserId);
-                    return BadRequest("Errore nella creazione del carrello.");
-                }
-
-                _logger.LogInformation("Carrello creato con successo per l'utente {UserId}.", carrelloCreateDto.UserId);
-                return CreatedAtAction(nameof(CreateCart), new { id = result.IdCarrello }, result);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Errore imprevisto durante la creazione del carrello.");
-                return StatusCode(500, "Errore interno del server.");
-            }
+            var result = await _carrelloService.GetCarrelloByEmailAsync(email); // Modificato nel servizio
+            return result == null ? NotFound() : Ok(result);
         }
 
-        // Aggiungi un articolo al carrello
-        [HttpPost("add/{userId}")]
-        public async Task<ActionResult<CarrelloItemDto>> AggiungiAlCarrello(string userId, [FromBody] CarrelloItemCreateDto carrelloItemCreateDto)
+        // Modificato per utilizzare l'email invece dell'ID
+        [HttpDelete("clear/{email}")]
+        public async Task<IActionResult> ClearCarrello(string email)
         {
-            try
-            {
-                if (carrelloItemCreateDto == null)
-                {
-                    _logger.LogWarning("Richiesta di aggiungere articolo fallita: i dati dell'articolo del carrello sono nulli.");
-                    return BadRequest("I dati dell'articolo del carrello non sono validi.");
-                }
-
-                _logger.LogInformation("Aggiunta di un articolo al carrello dell'utente {UserId}.", userId);
-
-                var result = await _carrelloService.AggiungiAlCarrelloAsync(userId, carrelloItemCreateDto);
-
-                if (result == null)
-                {
-                    _logger.LogWarning("Carrello non trovato per l'utente {UserId}.", userId);
-                    return NotFound("Carrello non trovato.");
-                }
-
-                _logger.LogInformation("Articolo aggiunto al carrello per l'utente {UserId}.", userId);
-                return CreatedAtAction(nameof(AggiungiAlCarrello), new { id = result.IdCarrelloItem }, result);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Errore imprevisto durante l'aggiunta dell'articolo al carrello.");
-                return StatusCode(500, "Errore interno del server.");
-            }
+            var success = await _carrelloService.ClearCarrelloAsync(email); // Modificato nel servizio
+            return success ? NoContent() : NotFound();
         }
 
-        // Aggiorna un articolo nel carrello
-        [HttpPut("update/{idCarrelloItem}")]
-        public async Task<ActionResult<CarrelloItemDto>> AggiornaCarrelloItem(int idCarrelloItem, [FromBody] CarrelloItemUpdateDto carrelloItemUpdateDto)
+        // Metodo per creare il carrello, utilizza l'email nel DTO
+        [HttpPost]
+        public async Task<IActionResult> CreateCarrello([FromBody] CarrelloCreateDto dto)
         {
-            try
-            {
-                if (carrelloItemUpdateDto == null)
-                {
-                    _logger.LogWarning("Richiesta di aggiornamento articolo fallita: i dati dell'articolo del carrello sono nulli.");
-                    return BadRequest("I dati dell'articolo del carrello non sono validi.");
-                }
-
-                _logger.LogInformation("Aggiornamento dell'articolo {CarrelloItemId} nel carrello.", idCarrelloItem);
-
-                var result = await _carrelloService.AggiornaCarrelloItemAsync(idCarrelloItem, carrelloItemUpdateDto);
-
-                if (result == null)
-                {
-                    _logger.LogWarning("Articolo del carrello con ID {CarrelloItemId} non trovato.", idCarrelloItem);
-                    return NotFound("Articolo del carrello non trovato.");
-                }
-
-                _logger.LogInformation("Articolo {CarrelloItemId} aggiornato con successo.", idCarrelloItem);
-                return Ok(result);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Errore imprevisto durante l'aggiornamento dell'articolo del carrello.");
-                return StatusCode(500, "Errore interno del server.");
-            }
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+            var result = await _carrelloService.CreateCarrelloAsync(dto);
+            return Ok(result);
         }
 
-        // Rimuovi un articolo dal carrello
-        [HttpDelete("delete/{idCarrelloItem}")]
-        public async Task<ActionResult> RimuoviDalCarrello(int idCarrelloItem)
+        // Metodo per aggiornare l'item nel carrello
+        [HttpPut("item/{itemId}")]
+        public async Task<IActionResult> UpdateCarrelloItem(int itemId, [FromBody] CarrelloItemUpdateDto dto)
         {
-            try
-            {
-                _logger.LogInformation("Rimozione dell'articolo {CarrelloItemId} dal carrello.", idCarrelloItem);
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+            var result = await _carrelloService.UpdateCarrelloItemAsync(itemId, dto);
+            return result == null ? NotFound() : Ok(result);
+        }
 
-                var success = await _carrelloService.RimuoviDalCarrelloAsync(idCarrelloItem);
-
-                if (!success)
-                {
-                    _logger.LogWarning("Articolo del carrello con ID {CarrelloItemId} non trovato.", idCarrelloItem);
-                    return NotFound("Articolo del carrello non trovato.");
-                }
-
-                _logger.LogInformation("Articolo {CarrelloItemId} rimosso dal carrello con successo.", idCarrelloItem);
-                return NoContent();  // Operazione completata con successo, ma senza contenuto da restituire
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Errore imprevisto durante la rimozione dell'articolo dal carrello.");
-                return StatusCode(500, "Errore interno del server.");
-            }
+        // Metodo per rimuovere un item dal carrello
+        [HttpDelete("item/{itemId}")]
+        public async Task<IActionResult> RemoveItem(int itemId)
+        {
+            var success = await _carrelloService.RemoveItemAsync(itemId);
+            return success ? NoContent() : NotFound();
         }
     }
 }
