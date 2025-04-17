@@ -21,7 +21,8 @@ namespace Capstone.DTOs.Recensione
         public int Valutazione { get; set; }
 
 
-        public string? UserId { get; set; }
+        [Required]
+        public string UserId { get; set; }
 
         [Required]
         [Display(Name = "Nome Utente")]

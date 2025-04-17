@@ -18,7 +18,8 @@ namespace Capstone.Models
 
       
         [ForeignKey("UserId")]
-     
+
+        [JsonIgnore]
         public ApplicationUser User { get; set; }
 
 
