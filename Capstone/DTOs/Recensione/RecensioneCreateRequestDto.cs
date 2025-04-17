@@ -11,8 +11,7 @@ namespace Capstone.DTOs.Recensione
         [Range(1, 5)]
         public int Valutazione { get; set; }
 
-        [Required]
-        public string UserId { get; set; }
+        public string? UserId { get; set; }     
 
         [Required]
         public int IdItinerario { get; set; }

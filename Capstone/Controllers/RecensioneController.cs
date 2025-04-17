@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using Capstone.DTOs.Recensione;
 using Capstone.Models;
-
+using Capstone.Services;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -34,35 +34,48 @@ public class RecensioniController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize]
     public async Task<IActionResult> Create([FromForm] RecensioneCreateRequestDto dto)
     {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        var recensione = await _service.CreateAsync(dto, userId);
+        var userEmail = User.FindFirstValue(ClaimTypes.Email);  // Usa l'email
+
+        if (string.IsNullOrEmpty(userEmail))
+            return Unauthorized();
+
+        var recensione = await _service.CreateAsync(dto, userEmail);
         return CreatedAtAction(nameof(GetById), new { id = recensione.IdRecensione }, recensione);
     }
 
     [HttpPut]
+    [Authorize]
     public async Task<IActionResult> Update([FromForm] RecensioneUpdateRequestDto dto)
     {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        var result = await _service.UpdateAsync(dto, userId);
+        var userEmail = User.FindFirstValue(ClaimTypes.Email);  // Usa l'email
+
+        if (string.IsNullOrEmpty(userEmail))
+            return Unauthorized();
+
+        var result = await _service.UpdateAsync(dto, userEmail);
 
         if (!result)
-            return Forbid();
+            return Forbid();  // Forbid = 403
 
-
-        return Ok(result); ;
+        return Ok(result);
     }
 
     [HttpDelete("{id}")]
+    [Authorize]
     public async Task<IActionResult> Delete(int id)
     {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        var result = await _service.DeleteAsync(id, userId);
+        var userEmail = User.FindFirstValue(ClaimTypes.Email);  // Usa l'email
+
+        if (string.IsNullOrEmpty(userEmail))
+            return Unauthorized();
+
+        var result = await _service.DeleteAsync(id, userEmail);
 
         if (!result)
             return Forbid();
-
 
         return Ok(result);
     }
