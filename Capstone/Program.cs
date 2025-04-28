@@ -156,8 +156,8 @@ try
     app.UseStaticFiles();
     app.UseHttpsRedirection();
 
-    app.UseAuthentication(); // Autenticazione PRIMA
-    app.UseAuthorization();  // Autorizzazione DOPO
+    app.UseAuthentication(); 
+    app.UseAuthorization();  
 
     app.MapControllers();
 
