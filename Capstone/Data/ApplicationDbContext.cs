@@ -131,10 +131,8 @@ namespace Capstone.Data
                   .OnDelete(DeleteBehavior.NoAction);
             modelBuilder.Entity<CarrelloItem>()
                 .HasOne(ci => ci.Partenza)
-                .WithMany()  
-                 .HasForeignKey(ci => ci.IdPartenza)
-                 
-                 .OnDelete(DeleteBehavior.NoAction);
+                .WithMany()
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<CarrelloItem>()
                 .Property(ci => ci.Prezzo)

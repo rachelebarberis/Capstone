@@ -187,58 +187,93 @@ namespace Capstone.Services
                 .Include(i => i.ItinerarioFascePrezzo)
                 .Include(i => i.Giorni)
                 .Include(i => i.Partenze)
+                .Include(i => i.Paese)
                 .FirstOrDefaultAsync(i => i.IdItinerario == id);
 
-            if (itinerario == null)
-            {
-                return null;
-            }
+            if (itinerario == null) return null;
 
             itinerario.NomeItinerario = itinerarioUpdateRequestDto.NomeItinerario;
             itinerario.Durata = itinerarioUpdateRequestDto.Durata;
             itinerario.ImmagineUrl = itinerarioUpdateRequestDto.ImmagineUrl;
 
+            if (itinerarioUpdateRequestDto.Paese != null)
+            {
+                var paese = await _context.Paesi.FindAsync(itinerarioUpdateRequestDto.Paese.IdPaese);
+                if (paese == null)
+                {
+                    throw new Exception($"Il paese con Id {itinerarioUpdateRequestDto.Paese.IdPaese} non esiste.");
+                }
+
+                if (paese.Nome != itinerarioUpdateRequestDto.Paese.Nome)
+                {
+                    paese.Nome = itinerarioUpdateRequestDto.Paese.Nome;
+                }
+
+                itinerario.Paese = paese;
+            }
+
             // 🔁 Aggiorna le fasce di prezzo
             foreach (var fasciaDto in itinerarioUpdateRequestDto.ItinerarioFascePrezzo)
             {
-                var fasciaPrezzo = itinerario.ItinerarioFascePrezzo
-                    .FirstOrDefault(fp => fp.IdItinerarioFasciaPrezzo == fasciaDto.IdItinerarioFasciaPrezzo);
-                if (fasciaPrezzo != null)
+                var fascia = itinerario.ItinerarioFascePrezzo
+                    .FirstOrDefault(f => f.IdItinerarioFasciaPrezzo == fasciaDto.IdItinerarioFasciaPrezzo);
+                if (fascia != null)
                 {
-                    fasciaPrezzo.Prezzo = fasciaDto.Prezzo;
+                    fascia.Prezzo = fasciaDto.Prezzo;
                 }
             }
 
-            // 🔁 Sovrascrive i giorni (puoi anche usare logica di update se preferisci)
+            // 🔁 Sovrascrive i giorni (ok cancellare e rigenerare)
             itinerario.Giorni.Clear();
-            foreach (var giorno in itinerarioUpdateRequestDto.Giorni)
+            foreach (var giornoDto in itinerarioUpdateRequestDto.Giorni)
             {
                 itinerario.Giorni.Add(new ItinerarioGiorno
                 {
-                    Giorno = giorno.Giorno,
-                    Titolo = giorno.Titolo,
-                    Descrizione = giorno.Descrizione,
+                    Giorno = giornoDto.Giorno,
+                    Titolo = giornoDto.Titolo,
+                    Descrizione = giornoDto.Descrizione,
                     IdItinerario = itinerario.IdItinerario
                 });
             }
 
-            // 🔁 Sovrascrive le partenze (facoltativo — dipende dal tuo uso)
-            itinerario.Partenze.Clear();
+            // 🔁 Aggiorna o aggiunge partenze senza rimuovere
             foreach (var partenzaDto in itinerarioUpdateRequestDto.Partenze)
             {
-                itinerario.Partenze.Add(new Partenza
+                var partenza = itinerario.Partenze
+                    .FirstOrDefault(p => p.IdPartenza == partenzaDto.IdPartenza);
+
+                if (partenza != null)
                 {
-                    DataPartenza = partenzaDto.DataPartenza,
-                    Stato = partenzaDto.Stato,
-                    IdItinerario = itinerario.IdItinerario
-                });
+                    partenza.DataPartenza = partenzaDto.DataPartenza;
+                    partenza.Stato = partenzaDto.Stato;
+
+                    // Aggiorna anche gli elementi del carrello associati
+                    var carrelloItems = await _context.CarrelloItems
+                        .Where(ci => ci.IdPartenza == partenza.IdPartenza)
+                        .ToListAsync();
+
+                    foreach (var item in carrelloItems)
+                    {
+                        item.Partenza.DataPartenza = partenzaDto.DataPartenza;
+                        item.Partenza.Stato = partenzaDto.Stato;
+                    }
+                }
+                else
+                {
+                    // Aggiunta nuova partenza
+                    itinerario.Partenze.Add(new Partenza
+                    {
+                        DataPartenza = partenzaDto.DataPartenza,
+                        Stato = partenzaDto.Stato,
+                        IdItinerario = itinerario.IdItinerario
+                    });
+                }
             }
 
             await _context.SaveChangesAsync();
 
             return new ItinerarioUpdateRequestDto
             {
-              
                 NomeItinerario = itinerario.NomeItinerario,
                 ImmagineUrl = itinerario.ImmagineUrl,
                 Durata = itinerario.Durata,
@@ -253,16 +288,26 @@ namespace Capstone.Services
                 {
                     IdPartenza = p.IdPartenza,
                     DataPartenza = p.DataPartenza,
-                    Stato = p.Stato,
+                    Stato = p.Stato
                 }).ToList(),
                 ItinerarioFascePrezzo = itinerario.ItinerarioFascePrezzo.Select(fp => new ItinerarioFasciaPrezzoUpdateRequestDto
                 {
                     IdItinerarioFasciaPrezzo = fp.IdItinerarioFasciaPrezzo,
-                    IdFasciaDiPrezzo= fp.IdFasciaDiPrezzo,
+                    IdFasciaDiPrezzo = fp.IdFasciaDiPrezzo,
                     Prezzo = fp.Prezzo
-                }).ToList()
+                }).ToList(),
+                Paese = itinerario.Paese != null
+                    ? new PaeseRequestDto
+                    {
+                        IdPaese = itinerario.Paese.IdPaese,
+                        Nome = itinerario.Paese.Nome
+                    }
+                    : null
             };
         }
+
+
+
 
 
 

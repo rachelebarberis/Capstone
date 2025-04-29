@@ -71,26 +71,64 @@ public class ItinerarioController : ControllerBase
     }
 
     // PUT: api/itinerari/{id}
+
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdateItinerario(int id, [FromBody] ItinerarioUpdateRequestDto itinerarioUpdateRequestDto)
     {
-        try
+        // Controlla se i dati inviati sono validi
+        if (!ModelState.IsValid)
         {
-            var itinerario = await _itinerarioService.UpdateItinerarioAsync(id, itinerarioUpdateRequestDto);
-            if (itinerario == null)
-            {
-                return NotFound();
-            }
-            return Ok(itinerario);
+            var errors = ModelState.Values.SelectMany(v => v.Errors)
+                                          .Select(e => e.ErrorMessage)
+                                          .ToList();
+
+            // Logga gli errori di validazione
+            Console.WriteLine("Errore di validazione: ");
+            errors.ForEach(error => Console.WriteLine(error));
+
+            return BadRequest(errors);  // Restituisce gli errori di validazione al client
         }
-        catch (Exception ex)
+
+        // Logga i dati ricevuti per la verifica
+        Console.WriteLine($"Aggiornamento itinerario con ID: {id}");
+        Console.WriteLine($"Nome itinerario: {itinerarioUpdateRequestDto.NomeItinerario}");
+        Console.WriteLine($"Durata: {itinerarioUpdateRequestDto.Durata}");
+        Console.WriteLine($"Immagine URL: {itinerarioUpdateRequestDto.ImmagineUrl}");
+
+        // Verifica se i dati di giorni, partenze, fasce di prezzo sono presenti
+        if (itinerarioUpdateRequestDto.Giorni != null && itinerarioUpdateRequestDto.Giorni.Any())
         {
-            _logger.LogError(ex, $"Errore durante l'aggiornamento dell'itinerario con ID {id}");
-            return StatusCode(500, "Errore interno del server");
+            Console.WriteLine($"Numero di giorni: {itinerarioUpdateRequestDto.Giorni.Count}");
         }
+        else
+        {
+            Console.WriteLine("Nessun giorno presente.");
+        }
+
+        if (itinerarioUpdateRequestDto.Partenze != null && itinerarioUpdateRequestDto.Partenze.Any())
+        {
+            Console.WriteLine($"Numero di partenze: {itinerarioUpdateRequestDto.Partenze.Count}");
+        }
+        else
+        {
+            Console.WriteLine("Nessuna partenza presente.");
+        }
+
+        // Passa la richiesta al servizio
+        var result = await _itinerarioService.UpdateItinerarioAsync(id, itinerarioUpdateRequestDto);
+
+        if (result == null)
+        {
+            Console.WriteLine("Itinerario non trovato.");
+            return NotFound($"Itinerario con ID {id} non trovato.");
+        }
+
+        // Ritorna l'itinerario aggiornato
+        return Ok(result);
     }
 
-    
+
+
 
     // DELETE: api/itinerari/{id}
     [HttpDelete("{id}")]
