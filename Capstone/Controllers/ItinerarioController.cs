@@ -75,27 +75,22 @@ public class ItinerarioController : ControllerBase
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdateItinerario(int id, [FromBody] ItinerarioUpdateRequestDto itinerarioUpdateRequestDto)
     {
-        // Controlla se i dati inviati sono validi
+      
         if (!ModelState.IsValid)
         {
             var errors = ModelState.Values.SelectMany(v => v.Errors)
                                           .Select(e => e.ErrorMessage)
                                           .ToList();
 
-            // Logga gli errori di validazione
+       
             Console.WriteLine("Errore di validazione: ");
             errors.ForEach(error => Console.WriteLine(error));
 
-            return BadRequest(errors);  // Restituisce gli errori di validazione al client
+            return BadRequest(errors); 
         }
 
-        // Logga i dati ricevuti per la verifica
-        Console.WriteLine($"Aggiornamento itinerario con ID: {id}");
-        Console.WriteLine($"Nome itinerario: {itinerarioUpdateRequestDto.NomeItinerario}");
-        Console.WriteLine($"Durata: {itinerarioUpdateRequestDto.Durata}");
-        Console.WriteLine($"Immagine URL: {itinerarioUpdateRequestDto.ImmagineUrl}");
+ 
 
-        // Verifica se i dati di giorni, partenze, fasce di prezzo sono presenti
         if (itinerarioUpdateRequestDto.Giorni != null && itinerarioUpdateRequestDto.Giorni.Any())
         {
             Console.WriteLine($"Numero di giorni: {itinerarioUpdateRequestDto.Giorni.Count}");
@@ -114,16 +109,16 @@ public class ItinerarioController : ControllerBase
             Console.WriteLine("Nessuna partenza presente.");
         }
 
-        // Passa la richiesta al servizio
+  
         var result = await _itinerarioService.UpdateItinerarioAsync(id, itinerarioUpdateRequestDto);
 
         if (result == null)
         {
-            Console.WriteLine("Itinerario non trovato.");
+          
             return NotFound($"Itinerario con ID {id} non trovato.");
         }
 
-        // Ritorna l'itinerario aggiornato
+     
         return Ok(result);
     }
 

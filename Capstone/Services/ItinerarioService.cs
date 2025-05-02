@@ -315,15 +315,28 @@ namespace Capstone.Services
         public async Task DeleteItinerarioAsync(int id)
         {
             var itinerario = await _context.Itinerari
+                .Include(i => i.Partenze)
                 .Include(i => i.ItinerarioFascePrezzo)
                 .FirstOrDefaultAsync(i => i.IdItinerario == id);
 
             if (itinerario != null)
             {
+  
+                var partenzaIds = itinerario.Partenze.Select(p => p.IdPartenza).ToList();
+                var carrelloItems = await _context.CarrelloItems
+                    .Where(ci => partenzaIds.Contains(ci.IdPartenza))
+                    .ToListAsync();
+
+                // Rimuovi gli elementi dal carrello
+                _context.CarrelloItems.RemoveRange(carrelloItems);
+
+                // Rimuovi l'itinerario
                 _context.Itinerari.Remove(itinerario);
+
                 await _context.SaveChangesAsync();
             }
         }
+
 
 
 
