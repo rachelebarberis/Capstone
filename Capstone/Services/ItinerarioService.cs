@@ -46,13 +46,13 @@ namespace Capstone.Services
                 }).ToList(),
                 Partenze = itinerario.Partenze.Select(p => new PartenzaRequestDto
                 {
-                    IdPartenza = p.IdPartenza, // Assicurati che sia "Id", non "IdPartenza"
+                    IdPartenza = p.IdPartenza, 
                     DataPartenza = p.DataPartenza,
                     Stato = p.Stato,
                 }).ToList(),
                 ItinerarioFascePrezzo = itinerario.ItinerarioFascePrezzo.Select(fp => new ItinerarioFasciaPrezzoRequestDto
                 {
-                    IdItinerarioFasciaPrezzo = fp.IdItinerarioFasciaPrezzo, // Assicurati che sia "Id", non "IdItinerarioFasciaPrezzo"
+                    IdItinerarioFasciaPrezzo = fp.IdItinerarioFasciaPrezzo, 
                     IdFasciaDiPrezzo = fp.IdFasciaDiPrezzo,
                     Prezzo = fp.Prezzo
                 }).ToList()
@@ -212,7 +212,7 @@ namespace Capstone.Services
                 itinerario.Paese = paese;
             }
 
-            // 🔁 Aggiorna le fasce di prezzo
+
             foreach (var fasciaDto in itinerarioUpdateRequestDto.ItinerarioFascePrezzo)
             {
                 var fascia = itinerario.ItinerarioFascePrezzo
@@ -223,7 +223,7 @@ namespace Capstone.Services
                 }
             }
 
-            // 🔁 Sovrascrive i giorni (ok cancellare e rigenerare)
+          
             itinerario.Giorni.Clear();
             foreach (var giornoDto in itinerarioUpdateRequestDto.Giorni)
             {
@@ -327,10 +327,10 @@ namespace Capstone.Services
                     .Where(ci => partenzaIds.Contains(ci.IdPartenza))
                     .ToListAsync();
 
-                // Rimuovi gli elementi dal carrello
+             
                 _context.CarrelloItems.RemoveRange(carrelloItems);
 
-                // Rimuovi l'itinerario
+               
                 _context.Itinerari.Remove(itinerario);
 
                 await _context.SaveChangesAsync();
@@ -343,7 +343,7 @@ namespace Capstone.Services
         public async Task<List<ItinerarioGetRequestDto>> GetItinerariByNomePaeseAsync(string nomePaese)
         {
             var itinerari = await _context.Itinerari
-                            .Where(i => i.Paese.Nome.ToLower() == nomePaese.ToLower()) // Confronto senza distinzione tra maiuscole e minuscole
+                            .Where(i => i.Paese.Nome.ToLower() == nomePaese.ToLower()) 
                 .Include(i => i.Paese)
                 .Include(i => i.ItinerarioFascePrezzo)
                     .ThenInclude(fp => fp.FasciaDiPrezzo)
@@ -353,7 +353,7 @@ namespace Capstone.Services
 
             if (itinerari == null || !itinerari.Any())
             {
-                return null; // O restituisci una lista vuota, a seconda della tua logica
+                return null; 
             }
 
             return itinerari.Select(itinerario => new ItinerarioGetRequestDto

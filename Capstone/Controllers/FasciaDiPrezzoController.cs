@@ -21,7 +21,7 @@ namespace Capstone.Controllers
             _logger = logger;
         }
 
-        // GET: api/fasciadiprezzo
+
         [HttpGet]
         public async Task<IActionResult> GetAllFDP()
         {
@@ -37,7 +37,7 @@ namespace Capstone.Controllers
             }
         }
 
-        // GET: api/fasciadiprezzo/{id}
+ 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetFDPById(int id)
         {
@@ -56,7 +56,7 @@ namespace Capstone.Controllers
             }
         }
 
-        // POST: api/fasciadiprezzo
+       
         [HttpPost]
         public async Task<IActionResult> CreateFasciaDiPrezzo([FromBody] AddFasceDiPrezzoResquestDto addFasceDiPrezzoResquestDto)
         {
@@ -78,7 +78,7 @@ namespace Capstone.Controllers
             }
         }
 
-        // PUT: api/fasciadiprezzo/{id}
+
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateFasciaDiPrezzo(int id, [FromBody] UpdateFasceDiPrezzoRequestDto updateFasceDiPrezzoRequestDto)
         {
@@ -100,7 +100,7 @@ namespace Capstone.Controllers
             }
         }
 
-        // DELETE: api/fasciadiprezzo/{id}
+   
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteFasciaDiPrezzo(int id)
         {

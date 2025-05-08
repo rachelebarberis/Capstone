@@ -37,7 +37,7 @@ public class RecensioniController : ControllerBase
     [Authorize]
     public async Task<IActionResult> Create([FromForm] RecensioneCreateRequestDto dto)
     {
-        var userEmail = User.FindFirstValue(ClaimTypes.Email);  // Usa l'email
+        var userEmail = User.FindFirstValue(ClaimTypes.Email);  
 
         if (string.IsNullOrEmpty(userEmail))
             return Unauthorized();
@@ -50,7 +50,7 @@ public class RecensioniController : ControllerBase
     [Authorize]
     public async Task<IActionResult> Update([FromForm] RecensioneUpdateRequestDto dto)
     {
-        var userEmail = User.FindFirstValue(ClaimTypes.Email);  // Usa l'email
+        var userEmail = User.FindFirstValue(ClaimTypes.Email);  
 
         if (string.IsNullOrEmpty(userEmail))
             return Unauthorized();
@@ -58,7 +58,7 @@ public class RecensioniController : ControllerBase
         var result = await _service.UpdateAsync(dto, userEmail);
 
         if (!result)
-            return Forbid();  // Forbid = 403
+            return Forbid();  
 
         return Ok(result);
     }
@@ -67,7 +67,7 @@ public class RecensioniController : ControllerBase
     [Authorize]
     public async Task<IActionResult> Delete(int id)
     {
-        var userEmail = User.FindFirstValue(ClaimTypes.Email);  // Usa l'email
+        var userEmail = User.FindFirstValue(ClaimTypes.Email);  
 
         if (string.IsNullOrEmpty(userEmail))
             return Unauthorized();

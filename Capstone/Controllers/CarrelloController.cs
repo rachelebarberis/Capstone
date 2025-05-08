@@ -17,23 +17,23 @@ namespace Capstone.Controllers
             _carrelloService = carrelloService;
         }
 
-        // Modificato per utilizzare l'email
+      
         [HttpGet("{email}")]
         public async Task<IActionResult> GetCarrello(string email)
         {
-            var result = await _carrelloService.GetCarrelloByEmailAsync(email); // Modificato nel servizio
+            var result = await _carrelloService.GetCarrelloByEmailAsync(email); 
             return result == null ? NotFound() : Ok(result);
         }
 
-        // Modificato per utilizzare l'email invece dell'ID
+       
         [HttpDelete("clear/{email}")]
         public async Task<IActionResult> ClearCarrello(string email)
         {
-            var success = await _carrelloService.ClearCarrelloAsync(email); // Modificato nel servizio
+            var success = await _carrelloService.ClearCarrelloAsync(email); 
             return success ? NoContent() : NotFound();
         }
 
-        // Metodo per creare il carrello, utilizza l'email nel DTO
+     
         [HttpPost]
         public async Task<IActionResult> CreateCarrello([FromBody] CarrelloCreateDto dto)
         {
@@ -42,7 +42,7 @@ namespace Capstone.Controllers
             return Ok(result);
         }
 
-        // Metodo per aggiornare l'item nel carrello
+     
         [HttpPut("item/{itemId}")]
         public async Task<IActionResult> UpdateCarrelloItem(int itemId, [FromBody] CarrelloItemUpdateDto dto)
         {
@@ -51,7 +51,7 @@ namespace Capstone.Controllers
             return result == null ? NotFound() : Ok(result);
         }
 
-        // Metodo per rimuovere un item dal carrello
+
         [HttpDelete("item/{itemId}")]
         public async Task<IActionResult> RemoveItem(int itemId)
         {

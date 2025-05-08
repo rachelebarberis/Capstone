@@ -15,7 +15,6 @@ public class ItinerarioController : ControllerBase
         _logger = logger;
     }
 
-    // GET: api/itinerari
     [HttpGet]
     public async Task<ActionResult<ItinerarioGetRequestDto>> GetAllItinerari()
     {
@@ -31,7 +30,7 @@ public class ItinerarioController : ControllerBase
         }
     }
 
-    // GET: api/itinerari/{id}
+  
     [HttpGet("{id}")]
     public async Task<ActionResult<ItinerarioGetRequestDto>> GetItinerarioById(int id)
     {
@@ -70,7 +69,7 @@ public class ItinerarioController : ControllerBase
         }
     }
 
-    // PUT: api/itinerari/{id}
+  
 
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdateItinerario(int id, [FromBody] ItinerarioUpdateRequestDto itinerarioUpdateRequestDto)
@@ -125,7 +124,7 @@ public class ItinerarioController : ControllerBase
 
 
 
-    // DELETE: api/itinerari/{id}
+
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteItinerario(int id)
     {
@@ -146,7 +145,6 @@ public class ItinerarioController : ControllerBase
         }
     }
 
-    // GET: api/itinerari/paese/nome/{nomePaese}
     [HttpGet("paese/nome/{nomePaese}")]
     public async Task<ActionResult<ItinerarioGetRequestDto>> GetItinerariByNomePaese(string nomePaese)
     {

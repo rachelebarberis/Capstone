@@ -29,7 +29,7 @@ namespace Capstone.Services
             }
         }
 
-        // ✅ GET ALL
+      
         public async Task<List<PaeseRequestDto>?> GetAllPaeseAsync()
         {
             try
@@ -70,7 +70,7 @@ namespace Capstone.Services
             }
         }
 
-        // ✅ CREATE (POST)
+     
         public async Task<bool> CreatePaeseAsync(AddPaeseRequestDto addPaeseRequestDto)
         {
             try
@@ -109,7 +109,6 @@ namespace Capstone.Services
             }
         }
 
-        // ✅ DELETE
         public async Task<bool> DeletePaeseAsync(int id)
         {
             try

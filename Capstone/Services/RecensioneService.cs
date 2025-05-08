@@ -106,22 +106,21 @@ public class RecensioneService
         if (recensione == null)
             return false;
 
-        // Confronta con l'email dell'utente
         var user = await _userManager.Users.FirstOrDefaultAsync(u => u.Email == userEmail);
 
         if (recensione.UserId != user.Id)
-            return false;  // Non puoi modificare recensioni di altri utenti
+            return false; 
 
         recensione.Commento = dto.Commento;
         recensione.Valutazione = dto.Valutazione;
 
-        // Salva immagine se fornita
+     
         if (dto.ImgUser != null && dto.ImgUser.Length > 0)
         {
             var fileExt = Path.GetExtension(dto.ImgUser.FileName);
             var fileName = $"{userEmail}_{Guid.NewGuid()}{fileExt}";
 
-            // Usa un percorso di salvataggio relativo per le immagini
+        
             var savePath = Path.Combine("wwwroot", "images", "users", fileName);
             Directory.CreateDirectory(Path.GetDirectoryName(savePath)!);
 
@@ -147,11 +146,11 @@ public class RecensioneService
         if (recensione == null)
             return false;
 
-        // Confronta con l'email dell'utente
+       
         var user = await _userManager.Users.FirstOrDefaultAsync(u => u.Email == userEmail);
 
         if (recensione.UserId != user.Id)
-            return false;  // Non puoi eliminare recensioni di altri utenti
+            return false;  
 
         _context.Recensioni.Remove(recensione);
         await _context.SaveChangesAsync();

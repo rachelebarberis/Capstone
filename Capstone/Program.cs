@@ -87,7 +87,7 @@ try
     })
     .AddJwtBearer(options =>
     {
-        options.SaveToken = true; // Salva il token
+        options.SaveToken = true; 
 
         options.TokenValidationParameters = new TokenValidationParameters()
         {
@@ -102,7 +102,6 @@ try
             RoleClaimType = ClaimTypes.Role
         };
 
-        // Eventi per il debug
         options.Events = new JwtBearerEvents
         {
             OnAuthenticationFailed = context =>
