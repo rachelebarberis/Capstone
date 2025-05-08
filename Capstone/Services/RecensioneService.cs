@@ -59,13 +59,13 @@ public class RecensioneService
 
     public async Task<Recensione> CreateAsync(RecensioneCreateRequestDto dto, string userEmail)
     {
-        // Recupera l'utente tramite l'email
+  
         var user = await _userManager.Users.FirstOrDefaultAsync(u => u.Email == userEmail);
 
         if (user == null)
             throw new ArgumentException("User not found.");
 
-        // Salva immagine se fornita
+       
         if (dto.ImgUser != null && dto.ImgUser.Length > 0)
         {
             var fileExt = Path.GetExtension(dto.ImgUser.FileName);
@@ -88,7 +88,7 @@ public class RecensioneService
         {
             Commento = dto.Commento,
             Valutazione = dto.Valutazione,
-            UserId = user.Id, // Associa la recensione all'utente tramite userId
+            UserId = user.Id, 
             IdItinerario = dto.IdItinerario,
             CreatedAt = DateOnly.FromDateTime(DateTime.Today)
         };
